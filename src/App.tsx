@@ -1,14 +1,38 @@
 import React from 'react';
 import './App.css';
 
-interface Shape {
-  indexes: number[]
-  color: string
+class Shape {
+  public indexes: number[]
+  public color: string
+
+  constructor(indexes: number[], color: string) {
+    this.indexes = indexes
+    this.color = color
+  }
+
+  moveLeft(width: number) {
+    if (this.indexes.every((index) => index % width > 0)) {
+      this.indexes = this.indexes.map((index) => index - 1)
+    }
+  }
+
+  moveRight(width: number) {
+    if (this.indexes.every((index) => index % width < width - 1)) {
+      this.indexes = this.indexes.map((index) => index + 1)
+    }
+  }
+
+  moveDown(width: number, height: number) {
+    if (this.indexes.every((index) => index + width < height*width)) {
+      this.indexes = this.indexes.map((index) => index + width)
+    }
+  }
+  
 }
 
 const Cell = ({index, filled, color}: {index: number, filled: boolean, color: string}) => {
   return (
-    <div className='cell' style={{backgroundColor: filled ? color : '#ADD8E6'}}></div>
+    <div className='cell' style={{backgroundColor: filled ? color : '#ADD8E6'}}>{index}</div>
   )
 }
 
@@ -45,39 +69,34 @@ const Board = ({height, width, shapes}: {height: number, width: number, shapes: 
 }
 
 const App = () => {
-  const height = 20
+  const height = 10
   const width = 10
-  const line: Shape = {indexes: [0, 1, 2], color: 'green'}
-  const [shapes, setShapes] = React.useState<Shape[]>([line])
+  const tickDurationMs = 400
+  
+  const line = new Shape([0, 1, 2], 'red')
+  const lShape = new Shape([0, 1, 2, 12], 'red')
+  const shapes = [line, lShape]
+
+  const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([line])
   const stopped = React.useRef(false)
+
+  // todo stop when can not place another shape, add random shapes
 
   let interval: NodeJS.Timeout | null
   const run = () => {
     stopped.current = false
-    interval = setInterval(doOneTurn, 700)
+    interval = setInterval(tick, tickDurationMs)
   }
 
-  const doOneTurn = ()  => {
+  const tick = ()  => {
+    console.log('tick')
     if (stopped.current) {
-      if (interval) {
-        clearInterval(interval)
-      }
-      return
+      stop()
     }
-    for (let i = 0; i < shapes.length; i++) {
-      let push = true
-      for (let j = 0; j < shapes[i].indexes.length; j++) {
-        if (shapes[i].indexes[j] + width > height*width) {
-          push = false
-          if (interval) {
-            clearInterval(interval)
-          }
-        }
-      }
-      if (push) {
-        setShapes(shapes.map((shape) => {shape.indexes = shape.indexes.map((index) => index + 10); return shape}))
-      }
+    for(const shape of shapesInGame) {
+      shape.moveDown(width, height)
     }
+    setShapesInGame([...shapesInGame])
   }
   const stop = () => {
     if (interval) {
@@ -93,12 +112,12 @@ const App = () => {
     }
     interval = null
     stopped.current = true
-    setShapes([line])
+    setShapesInGame([line])
   }
   
   return (
     <div>
-      <Board shapes={shapes} height={height} width={width}/>
+      <Board shapes={shapesInGame} height={height} width={width}/>
       <button onClick={run}>Start</button>
       <button onClick={stop}>Stop</button>
       <button onClick={reset}>Reset</button>
