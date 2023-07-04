@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Shape from './components/shape'
+import { Shape, IShape } from './components/shape'
 import Board from './components/Board'
 
 
@@ -17,11 +17,13 @@ const App = () => {
   }
 
   const height = 7
-  const width = 10
+  const width = 9
   let tickDurationMs = 400
+
   const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
   const toStop = React.useRef(false)
   const isRunning = React.useRef(false)
+
   const getAllIndexes = () => {
     let indexes: number[] = []
     for (const shape of shapesInGame) {
@@ -30,27 +32,40 @@ const App = () => {
     return indexes
   }
 
-  // todo stop when can not place another shape, add random shapes
+  const getWinningIndexes = () => {
+    const start = width * (height - 1)
+    const stop = (width * height) - 1
+    const arrayRange = (start: number, stop: number, step: number) => {
+      return Array.from(
+      { length: (stop - start) / step + 1 }, (value, index) => start + index * step
+      );
+    }
+    return arrayRange(start, stop, 1)
+  }
 
   let interval: NodeJS.Timeout | null
   const run = () => {
-    console.log('run', isRunning.current)
     if (isRunning.current) {
       return
     }
     toStop.current = false
-
     interval = setInterval(tick, tickDurationMs)
     isRunning.current = true
   }
 
   const tick = ()  => {
+    if (getWinningIndexes().every((index) => getAllIndexes().includes(index))) {
+      reset()
+      alert('Winner')
+      return
+    }
+
     if (toStop.current) {
       return
     }
 
     if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
-      const newLine = new Shape([0, 1, 2], getRandomColor())
+      const newLine = new IShape(getRandomColor())
       shapesInGame.push(newLine)
       setShapesInGame([...shapesInGame, newLine])
     }
@@ -62,15 +77,14 @@ const App = () => {
       }
       setShapesInGame([...shapesInGame])
       if (getAllIndexes().includes(0)) {
-        console.log('game over')
-        stop()
+        reset()
         alert('Game Over')
         return
       }
     }    
   }
+
   const stop = () => {
-    console.log('stop', isRunning.current)
     if (!isRunning.current) {
       return
     }

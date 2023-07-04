@@ -1,8 +1,8 @@
-class Shape {
+abstract class Shape {
     public indexes: number[]
     public color: string
     public isDown: boolean = false
-  
+
     constructor(indexes: number[], color: string, isDown: boolean = false) {
       this.indexes = indexes
       this.color = color
@@ -28,7 +28,27 @@ class Shape {
       else {
         this.isDown = true
       }
-    }  
+    }
+    abstract flip(width: number, height: number): void
+}
+
+class IShape extends Shape {
+  constructor(color: string, isDown: boolean = false) {
+    super([0, 1, 2], color, isDown)
   }
-  
-  export default Shape
+  flip(width: number, height: number): void {
+    const mid = this.indexes[1]
+    if (this.isLyingDown()) {
+      this.indexes = [this.indexes[0] + width + 1, this.indexes[1], this.indexes[2] - width - 1]
+    }
+    else {
+      this.indexes = [mid - 1, mid, mid, mid + 1]
+    }
+    
+  }
+  isLyingDown() {
+    return this.indexes[0] === this.indexes[1] - 1 && this.indexes[1] === this.indexes[2] - 1
+  }
+}
+
+export { Shape, IShape }

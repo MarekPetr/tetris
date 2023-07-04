@@ -1,4 +1,4 @@
-import Shape from './shape'
+import { Shape } from './shape'
 
 const Cell = ({index, filled, color}: {index: number, filled: boolean, color: string}) => {
     return (
