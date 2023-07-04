@@ -21,6 +21,8 @@ const App = () => {
   let tickDurationMs = 400
 
   const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
+  const getShapesDown = () => shapesInGame.filter((shape) => shape.isDown)
+  const getOccupiedIndexes = () => getShapesDown().map((shape) => shape.indexes).flat()
   const toStop = React.useRef(false)
   const isRunning = React.useRef(false)
 
@@ -65,14 +67,14 @@ const App = () => {
     }
 
     if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
-      const newLine = new IShape(getRandomColor())
-      shapesInGame.push(newLine)
-      setShapesInGame([...shapesInGame, newLine])
+      const newShape = new IShape(getRandomColor())
+      shapesInGame.push(newShape)
+      setShapesInGame([...shapesInGame, newShape])
     }
     else {
       for(const shape of shapesInGame) {
         if (!shape.isDown) {
-          shape.moveDown(width, height, shapesInGame.map((shape) => shape.indexes).flat())
+          shape.moveDown(width, height, getOccupiedIndexes())
         }
       }
       setShapesInGame([...shapesInGame])
@@ -112,10 +114,13 @@ const App = () => {
         continue
       }
       if (event.key === 'ArrowLeft') {
-        shape.moveLeft(width)
+        shape.moveLeft(width, getOccupiedIndexes())
       }
       if (event.key === 'ArrowRight') {
-        shape.moveRight(width)
+        shape.moveRight(width, getOccupiedIndexes())
+      }
+      if (event.key === 'ArrowUp') {
+        shape.flip(width, height, getOccupiedIndexes())
       }
     }
     setShapesInGame([...shapesInGame])

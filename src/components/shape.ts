@@ -9,14 +9,14 @@ abstract class Shape {
       this.isDown = false
     }
   
-    moveLeft(width: number) {
-      if (this.indexes.every((index) => index % width > 0)) {
+    moveLeft(width: number, occupiedIndexes: number[]) {
+      if (this.indexes.every((index) => index % width > 0) && !this.indexes.some((index) => occupiedIndexes.includes(index + width))) {
         this.indexes = this.indexes.map((index) => index - 1)
       }
     }
   
-    moveRight(width: number) {
-      if (this.indexes.every((index) => index % width < width - 1)) {
+    moveRight(width: number, occupiedIndexes: number[]) {
+      if (this.indexes.every((index) => index % width < width - 1) && !this.indexes.some((index) => occupiedIndexes.includes(index + width))) {
         this.indexes = this.indexes.map((index) => index + 1)
       }
     }
@@ -27,23 +27,28 @@ abstract class Shape {
       }
       else {
         this.isDown = true
+        console.log('isDown', this.indexes, occupiedIndexes)
       }
     }
-    abstract flip(width: number, height: number): void
+    abstract flip(width: number, height: number, occupiedIndexes: number[]): void
 }
 
 class IShape extends Shape {
   constructor(color: string, isDown: boolean = false) {
     super([0, 1, 2], color, isDown)
   }
-  flip(width: number, height: number): void {
+  flip(width: number, height: number, occupiedIndexes: number[]): void {
+    if (this.indexes.some((index) => occupiedIndexes.includes(index + width))) {
+      return
+    }
     const mid = this.indexes[1]
     if (this.isLyingDown()) {
-      this.indexes = [this.indexes[0] + width + 1, this.indexes[1], this.indexes[2] - width - 1]
+      this.indexes = [mid - width, mid, mid + width]
     }
     else {
-      this.indexes = [mid - 1, mid, mid, mid + 1]
+      this.indexes = [mid - 1, mid, mid + 1]
     }
+    console.log(this.indexes)
     
   }
   isLyingDown() {
