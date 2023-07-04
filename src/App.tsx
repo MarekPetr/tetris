@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Shape, IShape } from './components/shape'
+import { Shape, Line } from './components/shape'
 import Board from './components/Board'
 
 
@@ -67,7 +67,7 @@ const App = () => {
     }
 
     if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
-      const newShape = new IShape(getRandomColor())
+      const newShape = new Line(getRandomColor())
       shapesInGame.push(newShape)
       setShapesInGame([...shapesInGame, newShape])
     }
