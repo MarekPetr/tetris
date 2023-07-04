@@ -27,13 +27,12 @@ abstract class Shape {
       }
       else {
         this.isDown = true
-        console.log('isDown', this.indexes, occupiedIndexes)
       }
     }
     abstract flip(width: number, height: number, occupiedIndexes: number[]): void
 }
 
-class IShape extends Shape {
+class Line extends Shape {
   constructor(color: string, isDown: boolean = false) {
     super([0, 1, 2], color, isDown)
   }
@@ -47,13 +46,11 @@ class IShape extends Shape {
     }
     else {
       this.indexes = [mid - 1, mid, mid + 1]
-    }
-    console.log(this.indexes)
-    
+    }    
   }
   isLyingDown() {
     return this.indexes[0] === this.indexes[1] - 1 && this.indexes[1] === this.indexes[2] - 1
   }
 }
 
-export { Shape, IShape }
+export { Shape, Line }

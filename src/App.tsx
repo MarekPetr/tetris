@@ -16,9 +16,9 @@ const App = () => {
     return color
   }
 
-  const height = 7
+  const height = 15
   const width = 9
-  let tickDurationMs = 400
+  let tickDurationMs = 200
 
   const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
   const getShapesDown = () => shapesInGame.filter((shape) => shape.isDown)
@@ -34,17 +34,6 @@ const App = () => {
     return indexes
   }
 
-  const getWinningIndexes = () => {
-    const start = width * (height - 1)
-    const stop = (width * height) - 1
-    const arrayRange = (start: number, stop: number, step: number) => {
-      return Array.from(
-      { length: (stop - start) / step + 1 }, (value, index) => start + index * step
-      );
-    }
-    return arrayRange(start, stop, 1)
-  }
-
   let interval: NodeJS.Timeout | null
   const run = () => {
     if (isRunning.current) {
@@ -55,13 +44,28 @@ const App = () => {
     isRunning.current = true
   }
 
-  const tick = ()  => {
-    if (getWinningIndexes().every((index) => getAllIndexes().includes(index))) {
-      reset()
-      alert('Winner')
-      return
-    }
 
+  const removeFullLines = () => {
+    for(let line = 0; line < height; line++) {
+      const lineIndexes = Array.from({length: width}, (_, i) => i + (line * width))
+      const occupiedIndexes = getOccupiedIndexes()
+      const lineOccupied = lineIndexes.every((index) => occupiedIndexes.includes(index))
+      if (lineOccupied) {
+
+        for(const shape of shapesInGame) {
+          for (const index of lineIndexes) {
+            const indexToRemove = shape.indexes.indexOf(index)
+            if (indexToRemove !== -1) {
+              shape.indexes.splice(indexToRemove, 1)
+            }
+          }
+        }
+        setShapesInGame([...shapesInGame])
+      }
+    }
+  }
+
+  const tick = ()  => {
     if (toStop.current) {
       return
     }
@@ -83,7 +87,8 @@ const App = () => {
         alert('Game Over')
         return
       }
-    }    
+    }
+    removeFullLines()
   }
 
   const stop = () => {
