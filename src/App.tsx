@@ -4,10 +4,12 @@ import './App.css';
 class Shape {
   public indexes: number[]
   public color: string
+  public isDown: boolean = false
 
-  constructor(indexes: number[], color: string) {
+  constructor(indexes: number[], color: string, isDown: boolean = false) {
     this.indexes = indexes
     this.color = color
+    this.isDown = false
   }
 
   moveLeft(width: number) {
@@ -22,9 +24,12 @@ class Shape {
     }
   }
 
-  moveDown(width: number, height: number) {
-    if (this.indexes.every((index) => index + width < height*width)) {
+  moveDown(width: number, height: number, occupiedIndexes: number[]) {
+    if (this.indexes.every((index) => index + width < height*width) && !this.indexes.some((index) => occupiedIndexes.includes(index + width))) {
       this.indexes = this.indexes.map((index) => index + width)
+    }
+    else {
+      this.isDown = true
     }
   }
   
@@ -69,41 +74,82 @@ const Board = ({height, width, shapes}: {height: number, width: number, shapes: 
 }
 
 const App = () => {
-  const height = 10
-  const width = 10
-  const tickDurationMs = 400
-  
-  const line = new Shape([0, 1, 2], 'red')
-  const lShape = new Shape([0, 1, 2, 12], 'red')
-  const shapes = [line, lShape]
+  const nextColorIndex = React.useRef(0)
+  const getRandomColor = () => {
+    const colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple']
+    if (nextColorIndex.current === colors.length) {
+      nextColorIndex.current = 0
+    }
+    console.log(nextColorIndex.current)
+    const color = colors[nextColorIndex.current]
+    nextColorIndex.current += 1
+    return color
+  }
 
-  const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([line])
-  const stopped = React.useRef(false)
+  const height = 7
+  const width = 10
+  let tickDurationMs = 400
+
+
+  const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
+  const toStop = React.useRef(false)
+  const isRunning = React.useRef(false)
+  const allIndexes = React.useMemo(() => {
+    return shapesInGame.map((shape) => shape.indexes || []).flat() ?? []
+  }, [shapesInGame])
 
   // todo stop when can not place another shape, add random shapes
 
   let interval: NodeJS.Timeout | null
   const run = () => {
-    stopped.current = false
+    console.log('run', isRunning.current)
+    if (isRunning.current) {
+      return
+    }
+    toStop.current = false
+
     interval = setInterval(tick, tickDurationMs)
+    isRunning.current = true
   }
 
   const tick = ()  => {
-    console.log('tick')
-    if (stopped.current) {
+    if (toStop.current) {
+      return
+    }
+    
+    if ([0, 1, 2].some((index) => allIndexes.includes(index))) {
       stop()
+      alert('Game Over')
+      return
     }
-    for(const shape of shapesInGame) {
-      shape.moveDown(width, height)
+
+    if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
+      const newLine = new Shape([0, 1, 2], getRandomColor())
+      console.log('new line')
+      shapesInGame.push(newLine)
+      setShapesInGame([...shapesInGame, newLine])
     }
-    setShapesInGame([...shapesInGame])
+    else {
+      for(const shape of shapesInGame) {
+        if (!shape.isDown) {
+          shape.moveDown(width, height, shapesInGame.map((shape) => shape.indexes).flat())
+        }
+      }
+      setShapesInGame([...shapesInGame])
+    }
+    
   }
   const stop = () => {
+    console.log('stop', isRunning.current)
+    if (!isRunning.current) {
+      return
+    }
     if (interval) {
       clearInterval(interval)
     }
     interval = null
-    stopped.current = true
+    toStop.current = true
+    isRunning.current = false
   }
 
   const reset = () => {
@@ -111,12 +157,28 @@ const App = () => {
       clearInterval(interval)
     }
     interval = null
-    stopped.current = true
-    setShapesInGame([line])
+    toStop.current = true
+    isRunning.current = false
+    setShapesInGame([])
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    for(const shape of shapesInGame) {
+      if (shape.isDown){
+        continue
+      }
+      if (event.key === 'ArrowLeft') {
+        shape.moveLeft(width)
+      }
+      if (event.key === 'ArrowRight') {
+        shape.moveRight(width)
+      }
+    }
+    setShapesInGame([...shapesInGame])
   }
   
   return (
-    <div>
+    <div onKeyDown={handleKeyDown}>
       <Board shapes={shapesInGame} height={height} width={width}/>
       <button onClick={run}>Start</button>
       <button onClick={stop}>Stop</button>
