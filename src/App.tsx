@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './App.css';
 import { Shape, Line } from './components/shape'
 import Board from './components/Board'
 
+const useInterval = (callback: () => void, delay: number | null) => {
+  const savedCallback = useRef(() => {});
+
+  // Remember the latest function.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    const intervalTick = () => {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(intervalTick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
 
 const App = () => {
   const nextColorIndex = React.useRef(0)
@@ -16,15 +35,20 @@ const App = () => {
     return color
   }
 
-  const height = 15
+  const height = 10
   const width = 9
-  let tickDurationMs = 200
-
+  const initialTickDuration = 400
+  const fastTickDuration = 80
+  const [tickDurationMs, setTickDurationMs] = React.useState<number>(initialTickDuration)
   const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
+  const [isRunning, setIsRunning] = React.useState(false);
+
   const getShapesDown = () => shapesInGame.filter((shape) => shape.isDown)
   const getOccupiedIndexes = () => getShapesDown().map((shape) => shape.indexes).flat()
-  const toStop = React.useRef(false)
-  const isRunning = React.useRef(false)
+  
+  useInterval(() => {
+    tick()
+  }, isRunning ? tickDurationMs : null)
 
   const getAllIndexes = () => {
     let indexes: number[] = []
@@ -33,15 +57,11 @@ const App = () => {
     }
     return indexes
   }
-
-  let interval: NodeJS.Timeout | null
   const run = () => {
-    if (isRunning.current) {
+    if (isRunning) {
       return
     }
-    toStop.current = false
-    interval = setInterval(tick, tickDurationMs)
-    isRunning.current = true
+    setIsRunning(true)
   }
 
 
@@ -60,22 +80,14 @@ const App = () => {
             }
           }
         }
-        
         setShapesInGame([...shapesInGame])
       }
     }
   }
 
   const tick = ()  => {
-    if (toStop.current) {
-      return
-    }
-
     if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
       const newShape = new Line(getRandomColor(), width)
-      
-      console.log(newShape.indexes)
-      shapesInGame.push(newShape)
       setShapesInGame([...shapesInGame, newShape])
     }
     else {
@@ -85,7 +97,8 @@ const App = () => {
         }
       }
       setShapesInGame([...shapesInGame])
-      if (getAllIndexes().includes(0)) {
+
+      if (getAllIndexes().some((value) => value < width)) {
         reset()
         alert('Game Over')
         return
@@ -95,52 +108,65 @@ const App = () => {
   }
 
   const stop = () => {
-    if (!isRunning.current) {
+    if (!isRunning) {
       return
     }
-    if (interval) {
-      clearInterval(interval)
-    }
-    interval = null
-    toStop.current = true
-    isRunning.current = false
+    setIsRunning(false)
   }
 
   const reset = () => {
-    if (interval) {
-      clearInterval(interval)
-    }
-    interval = null
-    toStop.current = true
-    isRunning.current = false
+    setIsRunning(false)
     setShapesInGame([])
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleAction = (action: string) => {
     for(const shape of shapesInGame) {
       if (shape.isDown){
         continue
       }
-      if (event.key === 'ArrowLeft') {
+      if (action === 'ArrowLeft') {
         shape.moveLeft(getOccupiedIndexes())
       }
-      if (event.key === 'ArrowRight') {
+      if (action === 'ArrowRight') {
         shape.moveRight(getOccupiedIndexes())
       }
-      if (event.key === 'ArrowUp') {
+      if (action === 'ArrowUp') {
         shape.flip(width, height, getOccupiedIndexes())
       }
+      if (action === 'ArrowDown') {
+        if (isRunning) {
+          setIsRunning(false)
+          setTickDurationMs(fastTickDuration)
+          setIsRunning(true)
+        }
+      }
+
     }
     setShapesInGame([...shapesInGame])
+  }
+
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowDown') {
+      setIsRunning(false)
+      setTickDurationMs(initialTickDuration)
+      setIsRunning(true)
+    }
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    handleAction(event.key)
   }
   
   return (
     <div>
-      <div onKeyDown={handleKeyDown}>
+      <div onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
         <Board height={height} width={width} shapes={shapesInGame}/>
         <button onClick={run}>Start</button>
         <button onClick={stop}>Stop</button>
         <button onClick={reset}>Reset</button>
+        <button onClick={() => handleAction('ArrowLeft')}>Left</button>
+        <button onClick={()=> handleAction('ArrowUp')}>Flip</button>
+        <button onClick={()=> handleAction('ArrowRight')}>Right</button>
       </div>      
     </div>
   );
