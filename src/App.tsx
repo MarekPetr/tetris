@@ -60,6 +60,7 @@ const App = () => {
             }
           }
         }
+        
         setShapesInGame([...shapesInGame])
       }
     }
@@ -71,14 +72,16 @@ const App = () => {
     }
 
     if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
-      const newShape = new Line(getRandomColor())
+      const newShape = new Line(getRandomColor(), width)
+      
+      console.log(newShape.indexes)
       shapesInGame.push(newShape)
       setShapesInGame([...shapesInGame, newShape])
     }
     else {
       for(const shape of shapesInGame) {
         if (!shape.isDown) {
-          shape.moveDown(width, height, getOccupiedIndexes())
+          shape.moveDown(height, getOccupiedIndexes())
         }
       }
       setShapesInGame([...shapesInGame])
@@ -119,10 +122,10 @@ const App = () => {
         continue
       }
       if (event.key === 'ArrowLeft') {
-        shape.moveLeft(width, getOccupiedIndexes())
+        shape.moveLeft(getOccupiedIndexes())
       }
       if (event.key === 'ArrowRight') {
-        shape.moveRight(width, getOccupiedIndexes())
+        shape.moveRight(getOccupiedIndexes())
       }
       if (event.key === 'ArrowUp') {
         shape.flip(width, height, getOccupiedIndexes())
