@@ -45,10 +45,6 @@ const App = () => {
 
   const getShapesDown = () => shapesInGame.filter((shape) => shape.isDown)
   const getOccupiedIndexes = () => getShapesDown().map((shape) => shape.indexes).flat()
-  
-  useInterval(() => {
-    tick()
-  }, isRunning ? tickDurationMs : null)
 
   const getAllIndexes = () => {
     let indexes: number[] = []
@@ -87,6 +83,11 @@ const App = () => {
 
   const tick = ()  => {
     if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
+      if (getAllIndexes().some((value) => value < width)) {
+        reset()
+        alert('Game Over')
+        return
+      }
       const newShape = new Line(getRandomColor(), width)
       setShapesInGame([...shapesInGame, newShape])
     }
@@ -97,15 +98,11 @@ const App = () => {
         }
       }
       setShapesInGame([...shapesInGame])
-
-      if (getAllIndexes().some((value) => value < width)) {
-        reset()
-        alert('Game Over')
-        return
-      }
     }
     removeFullLines()
   }
+
+  useInterval(tick, isRunning ? tickDurationMs : null)
 
   const stop = () => {
     if (!isRunning) {
