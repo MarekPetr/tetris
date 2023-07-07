@@ -11,39 +11,43 @@ abstract class Shape {
       this.isDown = false
     }
   
-    moveLeft(occupiedIndexes: number[]) {
+    moveLeft(occupiedIndexes: number[]): boolean {
       if (
         this.indexes.every((index) => index % this.boardWidth > 0) && 
         !this.indexes.some((index) => occupiedIndexes.includes(index - 1))
       )
       {
         this.indexes = this.indexes.map((index) => index - 1)
+        return true
       }
+      return false
     }
   
-    moveRight(occupiedIndexes: number[]) {
+    moveRight(occupiedIndexes: number[]): boolean {
       if (
         this.indexes.every((index) => index % this.boardWidth < this.boardWidth - 1) && 
         !this.indexes.some((index) => occupiedIndexes.includes(index + 1))
       )
       {
         this.indexes = this.indexes.map((index) => index + 1)
+        return true
       }
+      return false
     }
   
-    moveDown(height: number, occupiedIndexes: number[]) {
+    moveDown(height: number, occupiedIndexes: number[]): boolean {
       if (
         this.indexes.every((index) => index + this.boardWidth < height * this.boardWidth) && 
         !this.indexes.some((index) => occupiedIndexes.includes(index + this.boardWidth))
       )
       {
         this.indexes = this.indexes.map((index) => index + this.boardWidth)
+        return true
       }
-      else {
-        this.isDown = true
-      }
+      this.isDown = true
+      return false
     }
-    abstract flip(boardWidth: number, height: number, occupiedIndexes: number[]): void
+    abstract flip(boardWidth: number, height: number, occupiedIndexes: number[]): boolean
 }
 
 class Line extends Shape {
@@ -51,9 +55,9 @@ class Line extends Shape {
     super([-1, 0, 1], boardWidth, color, isDown)
   }
 
-  flip(boardWidth: number, height: number, occupiedIndexes: number[]): void {
+  flip(boardWidth: number, height: number, occupiedIndexes: number[]): boolean {
     if (this.indexes.some((index) => occupiedIndexes.includes(index + boardWidth))) {
-      return
+      return false
     }
     const mid = this.indexes[1]
 
@@ -63,12 +67,13 @@ class Line extends Shape {
     else {
       // if the shape is on the left or right edge, don't flip - moves pieces out of shape
       if (mid % boardWidth === 0 || mid % boardWidth === (boardWidth - 1)) {
-        return
+        return false
       }
       this.indexes = [mid - 1, mid, mid + 1]
-    }    
+    }
+    return true
   }
-  isLyingDown() {
+  isLyingDown(): boolean {
     return this.indexes[0] === this.indexes[1] - 1 && this.indexes[1] === this.indexes[2] - 1
   }
 }

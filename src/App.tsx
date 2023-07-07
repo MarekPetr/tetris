@@ -62,27 +62,54 @@ const App = () => {
 
 
   const removeFullLines = () => {
-    for(let line = 0; line < height; line++) {
+    let firstLineRemoved = -1
+    let lineRemoved = false
+    let filteredShapes: Shape[] = []
+
+    for(let line = height; line > 0; line--) {
       const lineIndexes = Array.from({length: width}, (_, i) => i + (line * width))
       const occupiedIndexes = getOccupiedIndexes()
       const lineOccupied = lineIndexes.every((index) => occupiedIndexes.includes(index))
-      if (lineOccupied) {
-
-        for(const shape of shapesInGame) {
-          for (const index of lineIndexes) {
-            const indexToRemove = shape.indexes.indexOf(index)
-            if (indexToRemove !== -1) {
-              shape.indexes.splice(indexToRemove, 1)
+      if (!lineOccupied) {
+        continue
+      }
+      lineRemoved = true
+      for(const shape of shapesInGame) {
+        for (const index of lineIndexes) {
+          const indexToRemove = shape.indexes.indexOf(index)
+          if (indexToRemove !== -1) {
+            shape.indexes.splice(indexToRemove, 1)
+            if (firstLineRemoved === -1) {
+              firstLineRemoved = line
             }
           }
         }
-        setShapesInGame([...shapesInGame])
+      }
+      filteredShapes = shapesInGame.filter((shape) => shape.indexes.length !== 0)
+      setShapesInGame([...filteredShapes])
+    }
+
+    if (!lineRemoved) {
+      return
+    }
+    
+    const shapesAboveLine = filteredShapes.filter((shape) => shape.indexes.every((index) => index < firstLineRemoved * width))
+    const orderedShapes = shapesAboveLine.sort((a, b) => b.indexes[0] - a.indexes[0])
+
+    // for (let line = firstLineRemoved - 1; line > 0; line--) {
+    for(const shape of orderedShapes) {
+      let moved = true
+      shape.isDown = false
+      while (moved) {
+        const occupiedIndexes = filteredShapes.filter((shape) => shape.isDown).map((shape) => shape.indexes).flat()
+        moved = shape.moveDown(height, occupiedIndexes)
+        setShapesInGame([...filteredShapes])
       }
     }
   }
 
   const tick = ()  => {
-    if (shapesInGame.every((shape) => shape.isDown) || shapesInGame.length === 0) {
+    if (shapesInGame.every((shape) => shape.isDown)) {
       if (getAllIndexes().some((value) => value < width)) {
         reset()
         alert('Game Over')
@@ -155,16 +182,14 @@ const App = () => {
   }
   
   return (
-    <div>
-      <div onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
-        <Board height={height} width={width} shapes={shapesInGame}/>
-        <button onClick={run}>Start</button>
-        <button onClick={stop}>Stop</button>
-        <button onClick={reset}>Reset</button>
-        <button onClick={() => handleAction('ArrowLeft')}>Left</button>
-        <button onClick={()=> handleAction('ArrowUp')}>Flip</button>
-        <button onClick={()=> handleAction('ArrowRight')}>Right</button>
-      </div>      
+    <div onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+      <Board height={height} width={width} shapes={shapesInGame}/>
+      <button onClick={run}>Start</button>
+      <button onClick={stop}>Stop</button>
+      <button onClick={reset}>Reset</button>
+      <button onClick={() => handleAction('ArrowLeft')}>Left</button>
+      <button onClick={()=> handleAction('ArrowUp')}>Flip</button>
+      <button onClick={()=> handleAction('ArrowRight')}>Right</button>   
     </div>
   );
 }
