@@ -76,12 +76,9 @@ const App = () => {
       lineRemoved = true
       for(const shape of shapesInGame) {
         for (const index of lineIndexes) {
-          const indexToRemove = shape.indexes.indexOf(index)
-          if (indexToRemove !== -1) {
-            shape.indexes.splice(indexToRemove, 1)
-            if (firstLineRemoved === -1) {
-              firstLineRemoved = line
-            }
+          shape.removeIndex(index)
+          if (firstLineRemoved === -1) {
+            firstLineRemoved = line
           }
         }
       }
@@ -93,10 +90,9 @@ const App = () => {
       return
     }
     
-    const shapesAboveLine = filteredShapes.filter((shape) => shape.indexes.every((index) => index < firstLineRemoved * width))
+    const shapesAboveLine = filteredShapes.filter((shape) => shape.indexes.some((index) => index < firstLineRemoved * width))
     const orderedShapes = shapesAboveLine.sort((a, b) => b.indexes[0] - a.indexes[0])
 
-    // for (let line = firstLineRemoved - 1; line > 0; line--) {
     for(const shape of orderedShapes) {
       let moved = true
       shape.isDown = false

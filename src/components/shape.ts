@@ -47,6 +47,12 @@ abstract class Shape {
       this.isDown = true
       return false
     }
+    removeIndex(index: number): void {
+      this.indexes = this.indexes.filter((i) => i !== index)
+      for(let indexOnTop = index-this.boardWidth; indexOnTop >= 0; indexOnTop -= this.boardWidth) {
+        this.indexes = this.indexes.map((index) => index === indexOnTop ? index + this.boardWidth : index)
+      }
+    }
     abstract flip(boardWidth: number, height: number, occupiedIndexes: number[]): boolean
 }
 
