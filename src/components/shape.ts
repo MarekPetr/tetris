@@ -5,10 +5,11 @@ abstract class Shape {
     public isDown: boolean = false
 
     constructor(indexes: number[], boardWidth: number, color: string, isDown: boolean = false) {
-      this.indexes = indexes.map((index) => index + (Math.floor((boardWidth-1) / 2)))
+      this.indexes = indexes.map((index) => index + (Math.floor((boardWidth-1) / 2)) - 1)
       this.boardWidth = boardWidth
       this.color = color
       this.isDown = false
+      this.flipRandomly()
     }
   
     moveLeft(occupiedIndexes: number[]): boolean {
@@ -53,17 +54,24 @@ abstract class Shape {
         this.indexes = this.indexes.map((index) => index === indexOnTop ? index + this.boardWidth : index)
       }
     }
-    abstract flip(boardWidth: number, height: number, occupiedIndexes: number[]): boolean
+    abstract flip(boardWidth: number, height: number, occupiedIndexes: number[]): void
+
+    flipRandomly(): void {
+      const randomNumberOfFlips = Math.floor(Math.random() * 3)
+      for(let i = 0; i < randomNumberOfFlips; i++) {
+        this.flip(this.boardWidth, 0, [])
+      }
+    }
 }
 
 class Line extends Shape {
   constructor(color: string, boardWidth: number, isDown: boolean = false) {
-    super([-1, 0, 1], boardWidth, color, isDown)
+    super([0, 1, 2], boardWidth, color, isDown)
   }
 
-  flip(boardWidth: number, height: number, occupiedIndexes: number[]): boolean {
+  flip(boardWidth: number, height: number, occupiedIndexes: number[]) {
     if (this.indexes.some((index) => occupiedIndexes.includes(index + boardWidth))) {
-      return false
+      return
     }
     const mid = this.indexes[1]
 
@@ -77,11 +85,21 @@ class Line extends Shape {
       }
       this.indexes = [mid - 1, mid, mid + 1]
     }
-    return true
+    return
   }
-  isLyingDown(): boolean {
+  private isLyingDown(): boolean {
     return this.indexes[0] === this.indexes[1] - 1 && this.indexes[1] === this.indexes[2] - 1
   }
 }
 
-export { Shape, Line }
+class Cube extends Shape {
+  constructor(color: string, boardWidth: number, isDown: boolean = false) {
+    super([0, 1, boardWidth, boardWidth+1], boardWidth, color, isDown)
+  }
+
+  flip(boardWidth: number, height: number, occupiedIndexes: number[]) {
+    return false
+  }
+}
+
+export { Shape, Line, Cube}

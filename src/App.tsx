@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './App.css';
-import { Shape, Line } from './components/shape'
+import { Shape, Line, Cube } from './components/shape'
 import Board from './components/Board'
 
 const useInterval = (callback: () => void, delay: number | null) => {
@@ -104,6 +104,8 @@ const App = () => {
     }
   }
 
+  const shapesChoices = [Line, Cube]
+
   const tick = ()  => {
     if (shapesInGame.every((shape) => shape.isDown)) {
       if (getAllIndexes().some((value) => value < width)) {
@@ -111,7 +113,8 @@ const App = () => {
         alert('Game Over')
         return
       }
-      const newShape = new Line(getRandomColor(), width)
+      const RandomShape = shapesChoices[Math.floor(Math.random() * shapesChoices.length)]
+      const newShape = new RandomShape(getRandomColor(), width)
       setShapesInGame([...shapesInGame, newShape])
     }
     else {
