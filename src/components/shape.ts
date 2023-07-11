@@ -70,6 +70,7 @@ class Line extends Shape {
   }
 
   flip(boardWidth: number, height: number, occupiedIndexes: number[]) {
+    // TODO fix this - wont work for both orientations, find other cases
     if (this.indexes.some((index) => occupiedIndexes.includes(index + boardWidth))) {
       return
     }
@@ -102,4 +103,54 @@ class Cube extends Shape {
   }
 }
 
-export { Shape, Line, Cube}
+
+type TShapeOrientation = "up" | "right" | "down" | "left"
+
+class TShape extends Shape {
+  private orientation: TShapeOrientation = "down"
+
+  constructor(color: string, boardWidth: number, isDown: boolean = false) {
+    super([0, 1, 2, boardWidth+1], boardWidth, color, isDown)
+  }
+
+  flip(boardWidth: number, height: number, occupiedIndexes: number[]) {
+    // left -> down -> right -> up -> left
+    // TODO handle occupiedIndexes
+    let mid = this.indexes[1]
+    let newIndexes: number[] = []
+    let newOrientation: TShapeOrientation
+
+    if (this.orientation === "left") {
+      newOrientation = "down"
+      mid = this.indexes[2]
+      newIndexes = [mid - 1, mid, mid + boardWidth, mid + 1]      
+    }
+    else if (this.orientation === "down") {
+      newOrientation = "right"
+      mid = this.indexes[1]
+      newIndexes = [mid - boardWidth, mid, mid + boardWidth, mid + 1]      
+    }
+    else if (this.orientation === "right") {
+      newOrientation = "up"
+      mid = this.indexes[1]
+      newIndexes = [mid - boardWidth, mid - 1, mid, mid + 1]      
+    }
+    else { // up
+      newOrientation = "left"
+      mid = this.indexes[2]
+      newIndexes = [mid - boardWidth, mid - 1, mid, mid + boardWidth]
+    }
+    // move right if we are on the left edge and would break the shape
+    if (this.orientation !== "down" && Math.floor(mid / boardWidth) !== Math.floor((mid - 1) / boardWidth)) {
+      newIndexes = newIndexes.map((index) => index + 1)
+    }
+    // move left if we are on the right edge and would break the shape
+    if (this.orientation !== "up" && Math.floor(mid / boardWidth) !== Math.floor((mid + 1) / boardWidth)) {
+      newIndexes = newIndexes.map((index) => index - 1)
+    }
+    this.indexes = newIndexes
+    this.orientation = newOrientation
+  }
+}
+
+export { Shape, Line, Cube, TShape }
