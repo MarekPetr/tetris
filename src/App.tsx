@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './App.css';
-import { Shape, Line, Cube, TShape } from './components/shape'
+import { Shape, Line, Cube, TShape, BoardSize } from './components/shape'
 import Board from './components/Board'
 
 const useInterval = (callback: () => void, delay: number | null) => {
@@ -35,8 +35,7 @@ const App = () => {
     return color
   }
 
-  const height = 10
-  const width = 9
+  const boardSize: BoardSize = { width: 9, height: 10}
   const initialTickDuration = 400
   const fastTickDuration = 80
   const [tickDurationMs, setTickDurationMs] = React.useState<number>(initialTickDuration)
@@ -62,12 +61,12 @@ const App = () => {
 
 
   const removeFullLines = () => {
-    let firstLineRemoved = -1
+    let lastLineCleared = -1
     let lineRemoved = false
     let filteredShapes: Shape[] = []
 
-    for(let line = height; line > 0; line--) {
-      const lineIndexes = Array.from({length: width}, (_, i) => i + (line * width))
+    for(let line = boardSize.height; line > 0; line--) {
+      const lineIndexes = Array.from({length: boardSize.width}, (_, i) => i + (line * boardSize.width))
       const occupiedIndexes = getOccupiedIndexes()
       const lineOccupied = lineIndexes.every((index) => occupiedIndexes.includes(index))
       if (!lineOccupied) {
@@ -77,8 +76,8 @@ const App = () => {
       for(const shape of shapesInGame) {
         for (const index of lineIndexes) {
           shape.removeIndex(index)
-          if (firstLineRemoved === -1) {
-            firstLineRemoved = line
+          if (lastLineCleared === -1) {
+            lastLineCleared = line
           }
         }
       }
@@ -90,7 +89,7 @@ const App = () => {
       return
     }
     
-    const shapesAboveLine = filteredShapes.filter((shape) => shape.indexes.some((index) => index < firstLineRemoved * width))
+    const shapesAboveLine = filteredShapes.filter((shape) => shape.indexes.some((index) => index < lastLineCleared * boardSize.width))
     const orderedShapes = shapesAboveLine.sort((a, b) => b.indexes[0] - a.indexes[0])
 
     for(const shape of orderedShapes) {
@@ -98,7 +97,7 @@ const App = () => {
       shape.isDown = false
       while (moved) {
         const occupiedIndexes = filteredShapes.filter((shape) => shape.isDown).map((shape) => shape.indexes).flat()
-        moved = shape.moveDown(height, occupiedIndexes)
+        moved = shape.moveDown(boardSize.height, occupiedIndexes)
         setShapesInGame([...filteredShapes])
       }
     }
@@ -106,20 +105,27 @@ const App = () => {
 
   const tick = ()  => {
     if (shapesInGame.every((shape) => shape.isDown)) {
-      if (getAllIndexes().some((value) => value < width)) {
+      if (getAllIndexes().some((value) => value < boardSize.width)) {
         reset()
         alert('Game Over')
         return
       }
-      const shapesChoices = [Line, Cube, TShape]
+      const shapesChoices = [TShape, Cube, Line]
       const RandomShape = shapesChoices[Math.floor(Math.random() * shapesChoices.length)]
-      const newShape = new RandomShape(getRandomColor(), width)
+      const newShape = new RandomShape(getRandomColor(), boardSize)
+      newShape.flipRandomly(getOccupiedIndexes)
+      const occupiedIndexes = getOccupiedIndexes()
+      if (newShape.indexes.some((index) => occupiedIndexes.includes(index))) {
+        reset()
+        alert('Game Over')
+        return
+      }
       setShapesInGame([...shapesInGame, newShape])
     }
     else {
       for(const shape of shapesInGame) {
         if (!shape.isDown) {
-          shape.moveDown(height, getOccupiedIndexes())
+          shape.moveDown(boardSize.height, getOccupiedIndexes())
         }
       }
       setShapesInGame([...shapesInGame])
@@ -153,7 +159,7 @@ const App = () => {
         shape.moveRight(getOccupiedIndexes())
       }
       if (action === 'ArrowUp') {
-        shape.flip(width, height, getOccupiedIndexes())
+        shape.flip(getOccupiedIndexes())
       }
       if (action === 'ArrowDown') {
         if (isRunning) {
@@ -181,7 +187,7 @@ const App = () => {
   
   return (
     <div onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
-      <Board height={height} width={width} shapes={shapesInGame}/>
+      <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
       <button onClick={run}>Start</button>
       <button onClick={stop}>Stop</button>
       <button onClick={reset}>Reset</button>
