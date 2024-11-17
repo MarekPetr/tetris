@@ -3,6 +3,9 @@ import './App.css';
 import { Shape, Line, Cube, TShape, BoardSize } from './components/shape'
 import Board from './components/Board'
 
+
+const LOWER_TICK_DURATION_COEFFICIENT = 0.9
+
 const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef(() => {});
 
@@ -37,10 +40,13 @@ const App = () => {
 
   const boardSize: BoardSize = { width: 9, height: 10}
   const initialTickDuration = 400
-  const fastTickDuration = 80
   const [tickDurationMs, setTickDurationMs] = React.useState<number>(initialTickDuration)
+  const [currentLevelTickDurationMs, setCurrentLevelTickDurationMs] = React.useState<number>(initialTickDuration)
   const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
   const [isRunning, setIsRunning] = React.useState(false);
+  const [level, setLevel] = React.useState(1);
+  const [linesCleared, setLinesCleared] = React.useState(0);
+  
 
   const getShapesDown = () => shapesInGame.filter((shape) => shape.isDown)
   const getOccupiedIndexes = () => getShapesDown().map((shape) => shape.indexes).flat()
@@ -83,6 +89,7 @@ const App = () => {
       }
       filteredShapes = shapesInGame.filter((shape) => shape.indexes.length !== 0)
       setShapesInGame([...filteredShapes])
+      setLinesCleared(linesCleared+1)
     }
 
     if (!lineRemoved) {
@@ -99,6 +106,21 @@ const App = () => {
         const occupiedIndexes = filteredShapes.filter((shape) => shape.isDown).map((shape) => shape.indexes).flat()
         moved = shape.moveDown(boardSize.height, occupiedIndexes)
         setShapesInGame([...filteredShapes])
+      }
+    }
+
+    if (linesCleared % 10 === 0) {     
+      setLevel(level+1)
+      setLinesCleared(0)
+
+      const nextTickDuration = currentLevelTickDurationMs * LOWER_TICK_DURATION_COEFFICIENT
+      if (level <= 10) {
+        setTickDurationMs(nextTickDuration)
+        setCurrentLevelTickDurationMs(nextTickDuration)
+      }
+      else if ([13, 16, 19, 29].includes(level)) {
+        setTickDurationMs(nextTickDuration)
+        setCurrentLevelTickDurationMs(nextTickDuration)
       }
     }
   }
@@ -145,6 +167,9 @@ const App = () => {
   const reset = () => {
     setIsRunning(false)
     setShapesInGame([])
+    setLevel(1)
+    setTickDurationMs(initialTickDuration)
+    setLinesCleared(0)
   }
 
   const handleAction = (action: string) => {
@@ -163,9 +188,7 @@ const App = () => {
       }
       if (action === 'ArrowDown') {
         if (isRunning) {
-          setIsRunning(false)
-          setTickDurationMs(fastTickDuration)
-          setIsRunning(true)
+          setTickDurationMs(currentLevelTickDurationMs * 0.3)
         }
       }
 
@@ -175,9 +198,7 @@ const App = () => {
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'ArrowDown') {
-      setIsRunning(false)
-      setTickDurationMs(initialTickDuration)
-      setIsRunning(true)
+      setTickDurationMs(currentLevelTickDurationMs)
     }
   }
 
@@ -193,7 +214,9 @@ const App = () => {
       <button onClick={reset}>Reset</button>
       <button onClick={() => handleAction('ArrowLeft')}>Left</button>
       <button onClick={()=> handleAction('ArrowUp')}>Flip</button>
-      <button onClick={()=> handleAction('ArrowRight')}>Right</button>   
+      <button onClick={()=> handleAction('ArrowRight')}>Right</button>
+      <div>Level: {level}</div>
+      <div>Speed: {tickDurationMs}</div>
     </div>
   );
 }

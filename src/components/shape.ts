@@ -130,7 +130,6 @@ class TShape extends Shape {
   
   flip(occupiedIndexes: number[]) {
     // up -> right -> down -> left -> up
-    // TODO handle occupiedIndexes
     let mid = this.indexes[2]
     let newIndexes: number[] = []
     let newOrientation: TShapeOrientation
