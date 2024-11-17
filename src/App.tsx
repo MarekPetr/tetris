@@ -3,8 +3,8 @@ import './App.css';
 import { Shape, Line, Cube, TShape, BoardSize } from './components/shape'
 import Board from './components/Board'
 
-
-const LOWER_TICK_DURATION_COEFFICIENT = 0.9
+const LOWER_TICK_DURATION_COEFFICIENT = 0.95
+const FAST_TICK_DURATION_COEFFICIENT = 0.35
 
 const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef(() => {});
@@ -188,10 +188,9 @@ const App = () => {
       }
       if (action === 'ArrowDown') {
         if (isRunning) {
-          setTickDurationMs(currentLevelTickDurationMs * 0.3)
+          setTickDurationMs(currentLevelTickDurationMs * FAST_TICK_DURATION_COEFFICIENT)
         }
       }
-
     }
     setShapesInGame([...shapesInGame])
   }
