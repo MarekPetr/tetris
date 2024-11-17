@@ -206,14 +206,14 @@ const App = () => {
   }
   
   return (
-    <div onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+    <div className="board-page" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
-      <button onClick={run}>Start</button>
-      <button onClick={stop}>Stop</button>
-      <button onClick={reset}>Reset</button>
-      <button onClick={() => handleAction('ArrowLeft')}>Left</button>
-      <button onClick={()=> handleAction('ArrowUp')}>Flip</button>
-      <button onClick={()=> handleAction('ArrowRight')}>Right</button>
+      <button className="board-button" onClick={run}>Start</button>
+      <button className="board-button" onClick={stop}>Stop</button>
+      <button className="board-button" onClick={reset}>Reset</button>
+      <button className="board-button" onClick={() => handleAction('ArrowLeft')}>Left</button>
+      <button className="board-button" onClick={()=> handleAction('ArrowUp')}>Flip</button>
+      <button className="board-button" onClick={()=> handleAction('ArrowRight')}>Right</button>
       <div>Level: {level}</div>
       <div>Speed: {tickDurationMs}</div>
     </div>

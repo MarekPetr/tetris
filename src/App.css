@@ -1,5 +1,30 @@
+.board-page {
+  height: 100%;
+  background-color: #1A101B;
+}
+
+.board {
+  border: 6px solid black;
+  display: inline-block;
+}
+
+.board-first-border {
+  border: 10px solid #311C33;
+  display: inline-block;
+}
+
+.board-second-border {
+  border: 10px solid #1D203A;
+  display: inline-block;
+}
+
+.board-third-border {
+  border: 6px solid black;
+  display: inline-block;
+}
+
 .cell {
-  border: 1px solid;
+  border: 1px solid #332234;
   height: 40px;
   width: 40px;
   -webkit-user-select: none;

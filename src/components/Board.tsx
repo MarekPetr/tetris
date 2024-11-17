@@ -1,10 +1,10 @@
 import { Shape } from './shape'
 
-const CELL_COLOR = '#ADD8E6'
+const CELL_COLOR = '#1A101B'
 
 const Cell = ({index, filled, color}: {index: number, filled: boolean, color: string}) => {
   return (
-    <div className='cell' style={{backgroundColor: filled ? color : CELL_COLOR}}>{index}</div>
+    <div className='cell' style={{backgroundColor: filled ? color : CELL_COLOR}}/>
   )
 }
   
@@ -34,8 +34,14 @@ const Board = ({height, width, shapes}: {height: number, width: number, shapes: 
     )
   }
   return (
-    <div className='board'>
-        {rows}
+    <div className='board-third-border'>
+      <div className='board-second-border'>
+        <div className='board-first-border'>
+          <div className='board'>
+            {rows}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
