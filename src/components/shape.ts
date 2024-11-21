@@ -83,7 +83,6 @@ class Line extends Shape {
   }
 
   flip(occupiedIndexes: number[]) {
-    // TODO fix this - wont work for both orientations, find other cases
     let newIndexes: number[] = []
     const mid = this.indexes[1]
 
