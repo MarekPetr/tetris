@@ -224,16 +224,18 @@ const App = () => {
   
   return (
     <div className="board-page" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
-      <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
-      <button className="board-button" onClick={run}>Start</button>
-      <button className="board-button" onClick={stop}>Stop</button>
-      <button className="board-button" onClick={reset}>Reset</button>
-      <button className="board-button" onClick={() => handleAction('ArrowLeft')}>Left</button>
-      <button className="board-button" onClick={()=> handleAction('ArrowUp')}>Flip</button>
-      <button className="board-button" onClick={()=> handleAction('ArrowRight')}>Right</button>
-      <div>Level: {level}</div>
-      <div>Speed: {tickDurationMs}</div>
-      <div>Score: {score}</div>
+      <div className='content'>
+        <div className='buttons'>
+          <button className="board-button tile" onClick={run}>Play</button>
+          <button className="board-button tile" onClick={stop}>Pause</button>
+          <button className="board-button tile" onClick={reset}>Quit</button>
+        </div>
+        <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
+        <div className='buttons'>
+          <div className="level tile">Level: {level}</div>
+          <div className="score tile">Score: {score}</div>
+        </div>
+      </div>
     </div>
   );
 }
