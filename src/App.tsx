@@ -5,8 +5,8 @@ import Board from './components/Board'
 
 const WIDTH = 10
 const HEIGHT = 20
-const INITIAL_TICK_DURATION = 350
-const LOWER_TICK_DURATION_COEFFICIENT = 0.95
+const INITIAL_TICK_DURATION = 15 * HEIGHT
+const LOWER_TICK_DURATION_COEFFICIENT = 0.9
 const FAST_TICK_DURATION_COEFFICIENT = 0.30
 const SHAPES_COLORS = ['#8E4585', '#478B59', '#45598E']
 
@@ -45,9 +45,8 @@ const App = () => {
   const [tickDurationMs, setTickDurationMs] = React.useState<number>(INITIAL_TICK_DURATION)
   const [currentLevelTickDurationMs, setCurrentLevelTickDurationMs] = React.useState<number>(INITIAL_TICK_DURATION)
   const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
-  const [isRunning, setIsRunning] = React.useState(false);
-  const [level, setLevel] = React.useState(1);
-  const [linesCleared, setLinesCleared] = React.useState(0);
+  const [isRunning, setIsRunning] = React.useState(false)
+  const [level, setLevel] = React.useState(0)
   const [score, setScore] = React.useState(0)
 
   const getShapesDown = () => shapesInGame.filter((shape) => shape.isDown)
@@ -93,7 +92,6 @@ const App = () => {
       }
       filteredShapes = shapesInGame.filter((shape) => shape.indexes.length !== 0)
       setShapesInGame([...filteredShapes])
-      setLinesCleared(linesCleared+1)
     }
 
     if (!lineRemoved) {
@@ -113,13 +111,9 @@ const App = () => {
       }
     }
 
-    if (linesCleared % 10 === 0) {
+    if (numberOfLinesRemoved % 10 === 0 && level < 8) {
       setLevel(level+1)
-      setLinesCleared(0)
-    }
-
-    const nextTickDuration = currentLevelTickDurationMs * LOWER_TICK_DURATION_COEFFICIENT
-    if (level <= 10 || [13, 16, 19, 29].includes(level)) {
+      const nextTickDuration = currentLevelTickDurationMs * LOWER_TICK_DURATION_COEFFICIENT
       setTickDurationMs(nextTickDuration)
       setCurrentLevelTickDurationMs(nextTickDuration)
     }
@@ -129,16 +123,16 @@ const App = () => {
 
   const updateScore = (numberOfLinesRemoved: number) => {
     if (numberOfLinesRemoved === 1) {
-      setScore(score+(100*level))
+      setScore(score+(40*(level+1)))
     }
     else if (numberOfLinesRemoved === 2) {
-      setScore(score+(300*level))
+      setScore(score+(100*(level+1)))
     }
     else if (numberOfLinesRemoved === 3) {
-      setScore(score+(500*level))
+      setScore(score+(300*(level+1)))
     }
     else if (numberOfLinesRemoved === 4) {
-      setScore(score+(800*level))
+      setScore(score+(1200*(level+1)))
     }
   }
 
@@ -184,9 +178,9 @@ const App = () => {
   const reset = () => {
     setIsRunning(false)
     setShapesInGame([])
-    setLevel(1)
+    setLevel(0)
+    setScore(0)
     setTickDurationMs(INITIAL_TICK_DURATION)
-    setLinesCleared(0)
   }
 
   const handleAction = (action: string) => {
