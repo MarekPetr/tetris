@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import './App.css';
 import { Shape, Line, Cube, TShape, BoardSize } from './components/shape'
 import Board from './components/Board'
@@ -30,6 +30,7 @@ const useInterval = (callback: () => void, delay: number | null) => {
   }, [delay]);
 }
 
+
 const App = () => {
   const nextColorIndex = React.useRef(0)
   const getRandomColor = () => {
@@ -49,8 +50,14 @@ const App = () => {
   const [level, setLevel] = React.useState(0)
   const [score, setScore] = React.useState(0)
 
-  const getShapesDown = () => shapesInGame.filter((shape) => shape.isDown)
-  const getOccupiedIndexes = () => getShapesDown().map((shape) => shape.indexes).flat()
+  const shapesDown = useMemo(
+    () => shapesInGame.filter((shape) => shape.isDown),
+    [shapesInGame]
+  )
+  const occupiedIndexes = useMemo(
+    () => shapesDown.map((shape) => shape.indexes).flat(),
+    [shapesDown]
+  )
 
   const getAllIndexes = () => {
     let indexes: number[] = []
@@ -75,7 +82,6 @@ const App = () => {
 
     for(let line = boardSize.height; line > 0; line--) {
       const lineIndexes = Array.from({length: boardSize.width}, (_, i) => i + (line * boardSize.width))
-      const occupiedIndexes = getOccupiedIndexes()
       const lineOccupied = lineIndexes.every((index) => occupiedIndexes.includes(index))
       if (!lineOccupied) {
         continue
@@ -146,8 +152,7 @@ const App = () => {
       const shapesChoices = [TShape, Cube, Line]
       const RandomShape = shapesChoices[Math.floor(Math.random() * shapesChoices.length)]
       const newShape = new RandomShape(getRandomColor(), boardSize)
-      newShape.flipRandomly(getOccupiedIndexes)
-      const occupiedIndexes = getOccupiedIndexes()
+      newShape.flipRandomly(occupiedIndexes)
       if (newShape.indexes.some((index) => occupiedIndexes.includes(index))) {
         reset()
         alert('Game Over')
@@ -158,7 +163,7 @@ const App = () => {
     else {
       for(const shape of shapesInGame) {
         if (!shape.isDown) {
-          shape.moveDown(boardSize.height, getOccupiedIndexes())
+          shape.moveDown(boardSize.height, occupiedIndexes)
         }
       }
       setShapesInGame([...shapesInGame])
@@ -183,41 +188,49 @@ const App = () => {
     setTickDurationMs(INITIAL_TICK_DURATION)
   }
 
-  const handleAction = (action: string) => {
+  const handleShapeAction = useCallback((action: string) => {
     for(const shape of shapesInGame) {
       if (shape.isDown){
         continue
       }
       if (action === 'ArrowLeft') {
-        shape.moveLeft(getOccupiedIndexes())
+        shape.moveLeft(occupiedIndexes)
       }
       if (action === 'ArrowRight') {
-        shape.moveRight(getOccupiedIndexes())
+        shape.moveRight(occupiedIndexes)
       }
       if (action === 'ArrowUp') {
-        shape.flip(getOccupiedIndexes())
-      }
-      if (action === 'ArrowDown') {
-        if (isRunning) {
-          setTickDurationMs(currentLevelTickDurationMs * FAST_TICK_DURATION_COEFFICIENT)
-        }
+        shape.flip(occupiedIndexes)
       }
     }
     setShapesInGame([...shapesInGame])
-  }
+  }, [shapesInGame, occupiedIndexes])
 
-  const handleKeyUp = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'ArrowDown') {
-      setTickDurationMs(currentLevelTickDurationMs)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      handleShapeAction(event.key);
+      if (event.key === 'ArrowDown') {
+        setTickDurationMs(currentLevelTickDurationMs * FAST_TICK_DURATION_COEFFICIENT)
+      }
     }
-  }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    handleAction(event.key)
-  }
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === "ArrowDown") {
+        setTickDurationMs(currentLevelTickDurationMs)
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [handleShapeAction, currentLevelTickDurationMs]);
   
   return (
-    <div className="board-page" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+    <div className="board-page">
       <div className='content'>
         <div className='buttons'>
           <button className="board-button tile" onClick={run}>Play</button>

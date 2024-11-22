@@ -62,10 +62,10 @@ abstract class Shape {
     }
     abstract flip(occupiedIndexes: number[]): void
 
-    flipRandomly(getOccupiedIndexes: () => number[]): void {
+    flipRandomly(occupiedIndexes: number[]): void {
       const randomNumberOfFlips = Math.floor(Math.random() * 3)
       for(let i = 0; i < randomNumberOfFlips; i++) {
-        this.flip(getOccupiedIndexes())
+        this.flip(occupiedIndexes)
       }
     }
 
