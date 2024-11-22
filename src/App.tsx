@@ -58,14 +58,17 @@ const App = () => {
     () => shapesDown.map((shape) => shape.indexes).flat(),
     [shapesDown]
   )
+  const allIndexes = useMemo(
+    () => {
+      let indexes: number[] = []
+      for (const shape of shapesInGame) {
+        indexes = indexes.concat(shape.indexes)
+      }
+      return indexes
+    },
+    [shapesInGame]
+  )
 
-  const getAllIndexes = () => {
-    let indexes: number[] = []
-    for (const shape of shapesInGame) {
-      indexes = indexes.concat(shape.indexes)
-    }
-    return indexes
-  }
   const run = () => {
     if (isRunning) {
       return
@@ -144,7 +147,7 @@ const App = () => {
 
   const tick = ()  => {
     if (shapesInGame.every((shape) => shape.isDown)) {
-      if (getAllIndexes().some((value) => value < boardSize.width)) {
+      if (allIndexes.some((value) => value < boardSize.width)) {
         reset()
         alert('Game Over')
         return
