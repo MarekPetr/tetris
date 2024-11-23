@@ -48,6 +48,8 @@ const App = () => {
   const [isRunning, setIsRunning] = React.useState(false)
   const [level, setLevel] = React.useState(1)
   const [score, setScore] = React.useState(0)
+  const [isStopped, setStopped] = React.useState(false)
+  
   const currentLevelTickDurationMs = useMemo(
     () => {
       if (level < LEVEL_OF_MAX_SPEED) {
@@ -77,6 +79,21 @@ const App = () => {
     },
     [shapesInGame]
   )
+
+  const reset = () => {
+    setShapesInGame([])
+    setLevel(1)
+    setScore(0)
+    setTickDurationMs(currentLevelTickDurationMs)
+  }
+
+  const startGame = () => {
+    if (isRunning) {
+      return
+    }
+    reset()
+    setIsRunning(true)
+  }
 
   const run = () => {
     if (isRunning) {
@@ -151,18 +168,13 @@ const App = () => {
 
   const tick = ()  => {
     if (shapesInGame.every((shape) => shape.isDown)) {
-      if (allIndexes.some((value) => value < boardSize.width)) {
-        reset()
-        alert('Game Over')
-        return
-      }
       const shapesChoices = [TShape, Cube, Line]
       const RandomShape = shapesChoices[Math.floor(Math.random() * shapesChoices.length)]
       const newShape = new RandomShape(getRandomColor(), boardSize)
       newShape.flipRandomly(occupiedIndexes)
-      if (newShape.indexes.some((index) => occupiedIndexes.includes(index))) {
-        reset()
-        alert('Game Over')
+      if (newShape.indexes.some((index) => occupiedIndexes.includes(index))) {        
+        quit()
+        alert("Game over")
         return
       }
       setShapesInGame([...shapesInGame, newShape])
@@ -187,12 +199,9 @@ const App = () => {
     setIsRunning(false)
   }
 
-  const reset = () => {
+  const quit = () => {
     setIsRunning(false)
-    setShapesInGame([])
-    setLevel(1)
-    setScore(0)
-    setTickDurationMs(currentLevelTickDurationMs)
+    reset()
   }
 
   const handleShapeAction = useCallback((action: string) => {
@@ -240,9 +249,10 @@ const App = () => {
     <div className="board-page">
       <div className='content'>
         <div className='buttons'>
-          <button className="board-button tile" onClick={run}>Play</button>
+        <button className="board-button tile" onClick={startGame}>New Game</button>
+          <button className="board-button tile" onClick={run}>Continue</button>
           <button className="board-button tile" onClick={stop}>Pause</button>
-          <button className="board-button tile" onClick={reset}>Quit</button>
+          <button className="board-button tile" onClick={quit}>Quit</button>
         </div>
         <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
         <div className='buttons'>
