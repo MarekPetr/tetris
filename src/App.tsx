@@ -5,9 +5,9 @@ import Board from './components/Board'
 
 const WIDTH = 10
 const HEIGHT = 20
-const INITIAL_TICK_DURATION = 15 * HEIGHT
-const LOWER_TICK_DURATION_COEFFICIENT = 0.9
 const FAST_TICK_DURATION_COEFFICIENT = 0.30
+const LEVEL_OF_MAX_SPEED = 15
+const MAX_SPEED = 70
 const SHAPES_COLORS = ['#8E4585', '#478B59', '#45598E']
 
 const useInterval = (callback: () => void, delay: number | null) => {
@@ -43,12 +43,21 @@ const App = () => {
   }
 
   const boardSize: BoardSize = { width: WIDTH, height: HEIGHT}
-  const [tickDurationMs, setTickDurationMs] = React.useState<number>(INITIAL_TICK_DURATION)
-  const [currentLevelTickDurationMs, setCurrentLevelTickDurationMs] = React.useState<number>(INITIAL_TICK_DURATION)
+
   const [shapesInGame, setShapesInGame] = React.useState<Shape[]>([])
   const [isRunning, setIsRunning] = React.useState(false)
-  const [level, setLevel] = React.useState(0)
+  const [level, setLevel] = React.useState(1)
   const [score, setScore] = React.useState(0)
+  const currentLevelTickDurationMs = useMemo(
+    () => {
+      if (level < LEVEL_OF_MAX_SPEED) {
+        return -230/Math.log(LEVEL_OF_MAX_SPEED) * Math.log(level) + 300
+      }
+      return MAX_SPEED
+    },
+    [level]
+  )
+  const [tickDurationMs, setTickDurationMs] = React.useState<number>(currentLevelTickDurationMs)
 
   const shapesDown = useMemo(
     () => shapesInGame.filter((shape) => shape.isDown),
@@ -120,28 +129,23 @@ const App = () => {
       }
     }
 
-    if (numberOfLinesRemoved % 10 === 0 && level < 8) {
-      setLevel(level+1)
-      const nextTickDuration = currentLevelTickDurationMs * LOWER_TICK_DURATION_COEFFICIENT
-      setTickDurationMs(nextTickDuration)
-      setCurrentLevelTickDurationMs(nextTickDuration)
-    }
-
+    setLevel(level+1)
+    setTickDurationMs(currentLevelTickDurationMs)
     updateScore(numberOfLinesRemoved)
   }
 
   const updateScore = (numberOfLinesRemoved: number) => {
     if (numberOfLinesRemoved === 1) {
-      setScore(score+(40*(level+1)))
+      setScore(score+(40*(level)))
     }
     else if (numberOfLinesRemoved === 2) {
-      setScore(score+(100*(level+1)))
+      setScore(score+(100*(level)))
     }
     else if (numberOfLinesRemoved === 3) {
-      setScore(score+(300*(level+1)))
+      setScore(score+(300*(level)))
     }
     else if (numberOfLinesRemoved === 4) {
-      setScore(score+(1200*(level+1)))
+      setScore(score+(1200*(level)))
     }
   }
 
@@ -186,9 +190,9 @@ const App = () => {
   const reset = () => {
     setIsRunning(false)
     setShapesInGame([])
-    setLevel(0)
+    setLevel(1)
     setScore(0)
-    setTickDurationMs(INITIAL_TICK_DURATION)
+    setTickDurationMs(currentLevelTickDurationMs)
   }
 
   const handleShapeAction = useCallback((action: string) => {
@@ -244,6 +248,7 @@ const App = () => {
         <div className='buttons'>
           <div className="level tile">Level: {level}</div>
           <div className="score tile">Score: {score}</div>
+          <div className="score tile">Speed: {Math.floor(currentLevelTickDurationMs)}</div>
         </div>
       </div>
     </div>
