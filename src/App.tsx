@@ -248,7 +248,7 @@ const App = () => {
         <div className='buttons'>
           <div className="level tile">Level: {level}</div>
           <div className="score tile">Score: {score}</div>
-          <div className="score tile">Speed: {Math.floor(currentLevelTickDurationMs)}</div>
+          <div className="score tile">Speed: {Math.floor(tickDurationMs)}</div>
         </div>
       </div>
     </div>
