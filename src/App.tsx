@@ -6,8 +6,8 @@ import Board from './components/Board'
 const WIDTH = 10
 const HEIGHT = 20
 const FAST_TICK_DURATION_COEFFICIENT = 0.30
-const LEVEL_OF_MAX_SPEED = 29
-const MAX_SPEED = 85
+const LEVEL_OF_MAX_SPEED = 20
+const MAX_SPEED = 95
 const LINES_CLEARED_TO_LEVEL_UP = 1
 const SHAPES_COLORS = ['#8E4585', '#478B59', '#45598E']
 
@@ -53,10 +53,11 @@ const App = () => {
   const [totalLinesCleared, setTotalLinesCleared] = React.useState(0)
   
   const getCurrentLevelTickDurationMs = (level: number) => {
-    if (level < LEVEL_OF_MAX_SPEED) {
-      return -230/Math.log(LEVEL_OF_MAX_SPEED) * Math.log(level) + 300
+    const speed = -230/Math.log(LEVEL_OF_MAX_SPEED) * Math.log(level) + 300
+    if (speed < MAX_SPEED) {
+      return MAX_SPEED
     }
-    return MAX_SPEED
+    return speed
   }
 
   const [tickDurationMs, setTickDurationMs] = React.useState<number>(getCurrentLevelTickDurationMs(level))
