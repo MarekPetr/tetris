@@ -73,9 +73,14 @@
   border: 5px solid #41313f;
 }
 
+.board-button:disabled:hover {
+  background-color: transparent;
+  color: #ABADB4;
+}
+
 
 .board-button:hover {
-  background-color: black;
+  background-color: #271829;
   color: beige;
   box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
