@@ -255,7 +255,7 @@ const App = () => {
         <div className='buttons'>
         <button className="board-button tile" onClick={startGame}>New Game</button>
         { pauseButton }
-        <button className="board-button tile" onClick={quit}>Quit</button>
+        <button className="board-button tile" onClick={quit} disabled={!isRunning}>Quit</button>
         </div>
         <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
         <div className='buttons'>
