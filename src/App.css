@@ -54,7 +54,7 @@
 
 .tile {
   font-size: 24px;
-  color: #ABADB4;
+  color: #abb4af;
   border: solid;
   border-radius: 3%;
   background-color: transparent;
@@ -78,15 +78,21 @@
   color: #ABADB4;
 }
 
-
 .board-button:hover {
   background-color: #271829;
   color: beige;
   box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
-.level, .score {
+.statistics {
   border-color: #45598E;
   border-width: 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
+.tile .title {
+  font-size: 20px;
+  
+}

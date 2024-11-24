@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import './App.css';
 import { Shape, Line, Cube, TShape, BoardSize, ZShape } from './components/shape'
 import Board from './components/Board'
+import Statistics from './components/Statistics'
 
 const WIDTH = 10
 const HEIGHT = 20
@@ -256,9 +257,9 @@ const App = () => {
         </div>
         <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
         <div className='buttons'>
-          <div className="level tile">Level: {level}</div>
-          <div className="score tile">Score: {score}</div>
-          <div className="score tile">Speed: {Math.floor(tickDurationMs)}</div>
+          <Statistics title="Level" value={level}/>
+          <Statistics title="Score" value={score}/>
+          <Statistics title="Speed" value={Math.floor(tickDurationMs)}/>
         </div>
       </div>
     </div>

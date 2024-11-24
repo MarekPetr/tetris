@@ -229,7 +229,5 @@ class ZShape extends Shape {
   }
 }
 
-
-
 export { Shape, Line, Cube, TShape, ZShape }
 export type { BoardSize }
