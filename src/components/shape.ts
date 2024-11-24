@@ -77,32 +77,49 @@ abstract class Shape {
     }
 }
 
+const areOnTheSameLine = (indexes: number[], boardWidth: number) => {
+  if (indexes.length < 2) {
+    return false
+  }
+  const line = Math.floor(indexes[0] / boardWidth)
+  return indexes.every((index) => Math.floor(index / boardWidth) === line)
+}
+
+type LineOrientation = "horizontal" | "vertical"
+
 class Line extends Shape {
+  private orientation: LineOrientation = "horizontal"
+
   constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
     super([0, 1, 2], boardSize, color, isDown)
   }
 
   flip(occupiedIndexes: number[]) {
     let newIndexes: number[] = []
+    let newOrientation: LineOrientation
     const mid = this.indexes[1]
 
-    if (this.isLyingDown()) {
-      newIndexes = [mid - this.boardSize.width, mid, mid + this.boardSize.width]
+    switch(this.orientation) {
+      case("horizontal"):
+        newIndexes = [mid - this.boardSize.width, mid, mid + this.boardSize.width]
+        newOrientation = "vertical"
+        break
+      case("vertical"):
+        newIndexes = [mid - 1, mid, mid + 1]
+        newOrientation = "horizontal"
+        break
     }
-    else {
-      // if the shape is on the left or right edge, don't flip - moves pieces out of shape
-      if (mid % this.boardSize.width === 0 || mid % this.boardSize.width === (this.boardSize.width - 1)) {
-        return false
-      }
-      newIndexes = [mid - 1, mid, mid + 1]
+    if (this.orientation === 'vertical' && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
+      newIndexes = newIndexes.map((index) => index + 1)
+    }
+    if (this.orientation === 'vertical' && !areOnTheSameLine([mid, mid+1], this.boardSize.width)) {
+      newIndexes = newIndexes.map((index) => index - 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes, this.boardSize.height)) {
       return
     }
     this.indexes = newIndexes
-  }
-  private isLyingDown(): boolean {
-    return this.indexes[0] === this.indexes[1] - 1 && this.indexes[1] === this.indexes[2] - 1
+    this.orientation = newOrientation
   }
 }
 
@@ -116,7 +133,6 @@ class Cube extends Shape {
   }
 }
 
-
 type TShapeOrientation = "up" | "right" | "down" | "left"
 
 class TShape extends Shape {
@@ -129,7 +145,7 @@ class TShape extends Shape {
   
   flip(occupiedIndexes: number[]) {
     // up -> right -> down -> left -> up
-    let mid = this.indexes[2]
+    let mid: number
     let newIndexes: number[] = []
     let newOrientation: TShapeOrientation
     switch(this.orientation) {
@@ -161,11 +177,11 @@ class TShape extends Shape {
         break
     }
     // move right if we are on the left edge and would break the shape
-    if (this.orientation !== "down" && Math.floor(mid / this.boardSize.width) !== Math.floor((mid - 1) / this.boardSize.width)) {
+    if (this.orientation !== "down" && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
     // move left if we are on the right edge and would break the shape
-    if (this.orientation !== "up" && Math.floor(mid / this.boardSize.width) !== Math.floor((mid + 1) / this.boardSize.width)) {
+    if (this.orientation !== "up" && !areOnTheSameLine([mid, mid+1], this.boardSize.width)) {
       newIndexes = newIndexes.map((index) => index - 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes, this.boardSize.height)) {

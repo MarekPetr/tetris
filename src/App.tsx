@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import './App.css';
-import { Shape, Line, Cube, TShape, BoardSize } from './components/shape'
+import { Shape, Line, Cube, TShape, BoardSize, ZShape } from './components/shape'
 import Board from './components/Board'
 
 const WIDTH = 10
@@ -165,7 +165,7 @@ const App = () => {
 
   const tick = ()  => {
     if (shapesInGame.every((shape) => shape.isDown)) {
-      const shapesChoices = [TShape, Cube, Line]
+      const shapesChoices = [TShape, Cube, Line, ZShape]
       const RandomShape = shapesChoices[Math.floor(Math.random() * shapesChoices.length)]
       const newShape = new RandomShape(getRandomColor(), boardSize)
       newShape.flipRandomly(occupiedIndexes)
@@ -251,7 +251,7 @@ const App = () => {
         <div className='buttons'>
         <button className="board-button tile" onClick={startGame}>New Game</button>
         { pauseButton }
-        <button className="board-button tile" onClick={quit} disabled={!isRunning}>Quit</button>
+        <button className="board-button tile" onClick={quit} disabled={!isRunning && !isStopped}>Quit</button>
         </div>
         <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
         <div className='buttons'>
