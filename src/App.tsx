@@ -48,7 +48,7 @@ const App = () => {
   const [isRunning, setIsRunning] = React.useState(false)
   const [level, setLevel] = React.useState(1)
   const [score, setScore] = React.useState(0)
-  const [isStopped, setStopped] = React.useState(false)
+  const [isStopped, setIsStopped] = React.useState(false)
   
   const currentLevelTickDurationMs = useMemo(
     () => {
@@ -95,11 +95,12 @@ const App = () => {
     setIsRunning(true)
   }
 
-  const run = () => {
+  const continueRunning = () => {
     if (isRunning) {
       return
     }
     setIsRunning(true)
+    setIsStopped(false)
   }
 
 
@@ -193,14 +194,13 @@ const App = () => {
   useInterval(tick, isRunning ? tickDurationMs : null)
 
   const stop = () => {
-    if (!isRunning) {
-      return
-    }
     setIsRunning(false)
+    setIsStopped(true)
   }
 
   const quit = () => {
     setIsRunning(false)
+    setIsStopped(false)
     reset()
   }
 
@@ -244,15 +244,18 @@ const App = () => {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, [handleShapeAction, currentLevelTickDurationMs]);
+
+  const pauseButton = isStopped ? 
+    <button className="board-button tile" onClick={continueRunning}>Continue</button> :
+    <button className="board-button tile" onClick={stop} disabled={!isRunning}>Pause</button>
   
   return (
     <div className="board-page">
       <div className='content'>
         <div className='buttons'>
         <button className="board-button tile" onClick={startGame}>New Game</button>
-          <button className="board-button tile" onClick={run}>Continue</button>
-          <button className="board-button tile" onClick={stop}>Pause</button>
-          <button className="board-button tile" onClick={quit}>Quit</button>
+        { pauseButton }
+        <button className="board-button tile" onClick={quit}>Quit</button>
         </div>
         <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
         <div className='buttons'>
