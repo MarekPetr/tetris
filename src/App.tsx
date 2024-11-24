@@ -8,6 +8,7 @@ const HEIGHT = 20
 const FAST_TICK_DURATION_COEFFICIENT = 0.30
 const LEVEL_OF_MAX_SPEED = 15
 const MAX_SPEED = 70
+const LINES_CLEARED_TO_LEVEL_UP = 5
 const SHAPES_COLORS = ['#8E4585', '#478B59', '#45598E']
 
 const useInterval = (callback: () => void, delay: number | null) => {
@@ -49,17 +50,16 @@ const App = () => {
   const [level, setLevel] = React.useState(1)
   const [score, setScore] = React.useState(0)
   const [isStopped, setIsStopped] = React.useState(false)
+  const [totalLinesCleared, setTotalLinesCleared] = React.useState(0)
   
-  const currentLevelTickDurationMs = useMemo(
-    () => {
-      if (level < LEVEL_OF_MAX_SPEED) {
-        return -230/Math.log(LEVEL_OF_MAX_SPEED) * Math.log(level) + 300
-      }
-      return MAX_SPEED
-    },
-    [level]
-  )
-  const [tickDurationMs, setTickDurationMs] = React.useState<number>(currentLevelTickDurationMs)
+  const getCurrentLevelTickDurationMs = (level: number) => {
+    if (level < LEVEL_OF_MAX_SPEED) {
+      return -230/Math.log(LEVEL_OF_MAX_SPEED) * Math.log(level) + 300
+    }
+    return MAX_SPEED
+  }
+
+  const [tickDurationMs, setTickDurationMs] = React.useState<number>(getCurrentLevelTickDurationMs(level))
 
   const shapesDown = useMemo(
     () => shapesInGame.filter((shape) => shape.isDown),
@@ -69,22 +69,13 @@ const App = () => {
     () => shapesDown.map((shape) => shape.indexes).flat(),
     [shapesDown]
   )
-  const allIndexes = useMemo(
-    () => {
-      let indexes: number[] = []
-      for (const shape of shapesInGame) {
-        indexes = indexes.concat(shape.indexes)
-      }
-      return indexes
-    },
-    [shapesInGame]
-  )
 
   const reset = () => {
     setShapesInGame([])
-    setLevel(1)
+    const nextLevel = 1
+    setLevel(nextLevel)
     setScore(0)
-    setTickDurationMs(currentLevelTickDurationMs)
+    setTickDurationMs(getCurrentLevelTickDurationMs(nextLevel))
   }
 
   const startGame = () => {
@@ -146,10 +137,15 @@ const App = () => {
         setShapesInGame([...filteredShapes])
       }
     }
+    const currentTotalLinesCleared = totalLinesCleared + numberOfLinesRemoved
+    setTotalLinesCleared(currentTotalLinesCleared)
 
-    setLevel(level+1)
-    setTickDurationMs(currentLevelTickDurationMs)
-    updateScore(numberOfLinesRemoved)
+    if (currentTotalLinesCleared % LINES_CLEARED_TO_LEVEL_UP == 0) {
+      const nextLevel = level + 1
+      setLevel(nextLevel)
+      setTickDurationMs(getCurrentLevelTickDurationMs(nextLevel))
+      updateScore(numberOfLinesRemoved)
+    }    
   }
 
   const updateScore = (numberOfLinesRemoved: number) => {
@@ -226,13 +222,13 @@ const App = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       handleShapeAction(event.key);
       if (event.key === 'ArrowDown') {
-        setTickDurationMs(currentLevelTickDurationMs * FAST_TICK_DURATION_COEFFICIENT)
+        setTickDurationMs(getCurrentLevelTickDurationMs(level) * FAST_TICK_DURATION_COEFFICIENT)
       }
     }
 
     const handleKeyUp = (event: KeyboardEvent) => {
       if (event.key === "ArrowDown") {
-        setTickDurationMs(currentLevelTickDurationMs)
+        setTickDurationMs(getCurrentLevelTickDurationMs(level))
       }
     };
 
@@ -243,7 +239,7 @@ const App = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [handleShapeAction, currentLevelTickDurationMs]);
+  }, [handleShapeAction, level]);
 
   const pauseButton = isStopped ? 
     <button className="board-button tile" onClick={continueRunning}>Continue</button> :
