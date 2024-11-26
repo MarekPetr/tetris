@@ -69,10 +69,10 @@ abstract class Shape {
       }
     }
 
-    indexesOutOfBounds(indexes: number[], occupiedIndexes: number[], height: number) {
+    indexesOutOfBounds(indexes: number[], occupiedIndexes: number[]) {
       return (
         indexes.some((index) => occupiedIndexes.includes(index)) ||
-        indexes.some((index) => index > height * this.boardSize.width)
+        indexes.some((index) => index > this.boardSize.height * this.boardSize.width)
       )      
     }
 }
@@ -115,7 +115,7 @@ class Line extends Shape {
     if (this.orientation === 'vertical' && !areOnTheSameLine([mid, mid+1], this.boardSize.width)) {
       newIndexes = newIndexes.map((index) => index - 1)
     }
-    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes, this.boardSize.height)) {
+    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
       return
     }
     this.indexes = newIndexes
@@ -184,7 +184,7 @@ class TShape extends Shape {
     if (this.orientation !== "up" && !areOnTheSameLine([mid, mid+1], this.boardSize.width)) {
       newIndexes = newIndexes.map((index) => index - 1)
     }
-    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes, this.boardSize.height)) {
+    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
       return
     }
     this.indexes = newIndexes
@@ -209,7 +209,7 @@ class ZShape extends Shape {
     switch(this.orientation) {
       case("horizontal"):
         newOrientation = "vertical"
-        newIndexes = [mid - this.boardSize.width + 1, mid, mid +1, mid + this.boardSize.width]
+        newIndexes = [mid - this.boardSize.width + 1, mid, mid + 1, mid + this.boardSize.width]
         break
       case("vertical"):
         newOrientation = "horizontal"
@@ -220,7 +220,7 @@ class ZShape extends Shape {
     if (newOrientation === "horizontal" && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
-    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes, this.boardSize.height)) {
+    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
       return
     }
     
