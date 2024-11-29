@@ -3,6 +3,9 @@ interface BoardSize {
   height: number
 }
 
+type TwoAxesOrientation = "horizontal" | "vertical"
+type FourAxesOrientation = "up" | "down" | "left" | "right"
+
 abstract class Shape {
     public indexes: number[]
     public boardSize: BoardSize
@@ -85,10 +88,8 @@ const areOnTheSameLine = (indexes: number[], boardWidth: number) => {
   return indexes.every((index) => Math.floor(index / boardWidth) === line)
 }
 
-type LineOrientation = "horizontal" | "vertical"
-
 class Line extends Shape {
-  private orientation: LineOrientation = "horizontal"
+  private orientation: TwoAxesOrientation = "horizontal"
 
   constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
     super([0, 1, 2], boardSize, color, isDown)
@@ -96,7 +97,7 @@ class Line extends Shape {
 
   flip(occupiedIndexes: number[]) {
     let newIndexes: number[] = []
-    let newOrientation: LineOrientation
+    let newOrientation: TwoAxesOrientation
     const mid = this.indexes[1]
 
     switch(this.orientation) {
@@ -133,10 +134,8 @@ class Cube extends Shape {
   }
 }
 
-type TShapeOrientation = "up" | "right" | "down" | "left"
-
 class TShape extends Shape {
-  private orientation: TShapeOrientation = "up"
+  private orientation: FourAxesOrientation = "up"
 
   constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
     super([1, boardSize.width, boardSize.width+1, boardSize.width+2], boardSize, color, isDown)
@@ -147,7 +146,7 @@ class TShape extends Shape {
     // up -> right -> down -> left -> up
     let mid: number
     let newIndexes: number[] = []
-    let newOrientation: TShapeOrientation
+    let newOrientation: FourAxesOrientation
     switch(this.orientation) {
       case "up":
         newOrientation = "right"
@@ -192,10 +191,8 @@ class TShape extends Shape {
   }
 }
 
-type ZShapeOrientation = "horizontal" | "vertical"
-
 class ZShape extends Shape {
-  private orientation: ZShapeOrientation = "horizontal"
+  private orientation: TwoAxesOrientation = "horizontal"
 
   constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
     super([0, 1, boardSize.width + 1, boardSize.width + 2], boardSize, color, isDown)
@@ -204,7 +201,7 @@ class ZShape extends Shape {
   flip(occupiedIndexes: number[]) {
     const mid: number = this.indexes[1]
     let newIndexes: number[] = []
-    let newOrientation: ZShapeOrientation
+    let newOrientation: TwoAxesOrientation
 
     switch(this.orientation) {
       case("horizontal"):
