@@ -226,5 +226,44 @@ class ZShape extends Shape {
   }
 }
 
-export { Shape, Line, Cube, TShape, ZShape }
+class SShape extends Shape {
+  private orientation: TwoAxesOrientation = "horizontal"
+
+  constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
+    super([1, 2, boardSize.width, boardSize.width + 1], boardSize, color, isDown)
+  }
+
+  flip(occupiedIndexes: number[]) {
+    let newIndexes: number[] = []
+    let newOrientation: TwoAxesOrientation
+    let mid: number
+
+    switch(this.orientation) {
+      case("horizontal"):
+        mid = this.indexes[0]
+        newOrientation = "vertical"        
+        newIndexes = [mid - this.boardSize.width, mid, mid + 1, mid + this.boardSize.width + 1]
+        break
+      case("vertical"):
+        mid = this.indexes[1]
+        newOrientation = "horizontal"        
+        newIndexes = [mid, mid + 1, mid + this.boardSize.width - 1, mid + this.boardSize.width]
+        break
+    }
+
+    // move right when the new rotation is horizontal and the wall prevents to flip the shape
+    if (newOrientation === "horizontal" && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
+      newIndexes = newIndexes.map((index) => index + 1)
+    }
+    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
+      return
+    }
+    
+    this.indexes = newIndexes
+    this.orientation = newOrientation
+  }
+}
+
+
+export { Shape, Line, Cube, TShape, ZShape, SShape }
 export type { BoardSize }
