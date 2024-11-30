@@ -72,19 +72,16 @@ abstract class Shape {
       }
     }
 
-    indexesOutOfBounds(indexes: number[], occupiedIndexes: number[]) {
+    protected indexesOutOfBounds(indexes: number[], occupiedIndexes: number[]) {
       return (
         indexes.some((index) => occupiedIndexes.includes(index)) ||
         indexes.some((index) => index > this.boardSize.height * this.boardSize.width)
       )      
     }
 
-    areOnTheSameLineAsFirst(indexes: number[]) {
-      if (indexes.length < 2) {
-        return false
-      }
-      const line = Math.floor(indexes[0] / this.boardSize.width)
-      return indexes.every((index) => Math.floor(index / this.boardSize.width) === line)
+    protected areOnTheSameLine(first: number, second: number) {
+      const line = Math.floor(first / this.boardSize.width)
+      return line === Math.floor(second / this.boardSize.width)
     }
 }
 
@@ -110,17 +107,19 @@ class Line extends Shape {
         newIndexes = [mid - 2, mid - 1, mid, mid + 1]
         break
     }
-    console.log(this.areOnTheSameLineAsFirst([mid, mid-1]))
-    if (newOrientation === 'horizontal' && !this.areOnTheSameLineAsFirst([mid, mid-1])) {
-      newIndexes = newIndexes.map((index) => index + 2)
-    }
-    else if (newOrientation === 'horizontal' && !this.areOnTheSameLineAsFirst([mid, mid-2, mid-1])) {
-      newIndexes = newIndexes.map((index) => index + 1)
+    console.log(this.areOnTheSameLine(mid, mid-1))
+    if (newOrientation === 'horizontal') {
+      if (!this.areOnTheSameLine(mid, mid-1)) {
+        newIndexes = newIndexes.map((index) => index + 2)
+      }
+      else if (!this.areOnTheSameLine(mid, mid-2)) {
+        newIndexes = newIndexes.map((index) => index + 1)
+      }  
+      else if (!this.areOnTheSameLine(mid, mid+1)) {
+        newIndexes = newIndexes.map((index) => index - 1)
+      }
     }
 
-    else if (newOrientation === 'horizontal' && !this.areOnTheSameLineAsFirst([mid, mid+1])) {
-      newIndexes = newIndexes.map((index) => index - 1)
-    }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
       return
     }
@@ -181,11 +180,11 @@ class TShape extends Shape {
         break
     }
     // move right if we are on the left edge and would break the shape
-    if (this.orientation !== "down" && !this.areOnTheSameLineAsFirst([mid-1, mid])) {
+    if (this.orientation !== "down" && !this.areOnTheSameLine(mid-1, mid)) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
     // move left if we are on the right edge and would break the shape
-    if (this.orientation !== "up" && !this.areOnTheSameLineAsFirst([mid, mid+1])) {
+    if (this.orientation !== "up" && !this.areOnTheSameLine(mid, mid+1)) {
       newIndexes = newIndexes.map((index) => index - 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
@@ -219,7 +218,7 @@ class ZShape extends Shape {
         break
     }
     // move right when the new rotation is horizontal and the wall prevents to flip the shape
-    if (newOrientation === "horizontal" && !this.areOnTheSameLineAsFirst([mid-1, mid])) {
+    if (newOrientation === "horizontal" && !this.areOnTheSameLine(mid-1, mid)) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
@@ -257,7 +256,7 @@ class SShape extends Shape {
     }
 
     // move right when the new rotation is horizontal and the wall prevents to flip the shape
-    if (newOrientation === "horizontal" && !this.areOnTheSameLineAsFirst([mid-1, mid])) {
+    if (newOrientation === "horizontal" && !this.areOnTheSameLine(mid-1, mid)) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
