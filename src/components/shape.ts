@@ -12,7 +12,7 @@ abstract class Shape {
     public color: string
     public isDown: boolean = false
 
-    constructor(indexes: number[], boardSize: BoardSize, color: string, isDown: boolean = false) {
+    constructor(indexes: number[], boardSize: BoardSize, color: string) {
       this.indexes = indexes.map((index) => index + (Math.floor((boardSize.width-1) / 2)) - 1)
       this.boardSize = boardSize
       this.color = color
@@ -88,8 +88,8 @@ abstract class Shape {
 class Line extends Shape {
   private orientation: TwoAxesOrientation = "horizontal"
 
-  constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
-    super([0, 1, 2, 3], boardSize, color, isDown)
+  constructor(color: string, boardSize: BoardSize) {
+    super([0, 1, 2, 3], boardSize, color)
   }
 
   flip(occupiedIndexes: number[]) {
@@ -107,7 +107,6 @@ class Line extends Shape {
         newIndexes = [mid - 2, mid - 1, mid, mid + 1]
         break
     }
-    console.log(this.areOnTheSameLine(mid, mid-1))
     if (newOrientation === 'horizontal') {
       if (!this.areOnTheSameLine(mid, mid-1)) {
         newIndexes = newIndexes.map((index) => index + 2)
@@ -129,8 +128,8 @@ class Line extends Shape {
 }
 
 class Cube extends Shape {
-  constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
-    super([0, 1, boardSize.width, boardSize.width+1], boardSize, color, isDown)
+  constructor(color: string, boardSize: BoardSize) {
+    super([0, 1, boardSize.width, boardSize.width+1], boardSize, color)
   }
 
   flip(occupiedIndexes: number[]) {
@@ -141,8 +140,8 @@ class Cube extends Shape {
 class TShape extends Shape {
   private orientation: FourAxesOrientation = "up"
 
-  constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
-    super([1, boardSize.width, boardSize.width+1, boardSize.width+2], boardSize, color, isDown)
+  constructor(color: string, boardSize: BoardSize) {
+    super([1, boardSize.width, boardSize.width+1, boardSize.width+2], boardSize, color)
     this.orientation = "up"
   }
   
@@ -198,8 +197,8 @@ class TShape extends Shape {
 class ZShape extends Shape {
   private orientation: TwoAxesOrientation = "horizontal"
 
-  constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
-    super([0, 1, boardSize.width + 1, boardSize.width + 2], boardSize, color, isDown)
+  constructor(color: string, boardSize: BoardSize) {
+    super([0, 1, boardSize.width + 1, boardSize.width + 2], boardSize, color)
   }
 
   flip(occupiedIndexes: number[]) {
@@ -233,8 +232,8 @@ class ZShape extends Shape {
 class SShape extends Shape {
   private orientation: TwoAxesOrientation = "horizontal"
 
-  constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
-    super([1, 2, boardSize.width, boardSize.width + 1], boardSize, color, isDown)
+  constructor(color: string, boardSize: BoardSize) {
+    super([1, 2, boardSize.width, boardSize.width + 1], boardSize, color)
   }
 
   flip(occupiedIndexes: number[]) {
@@ -267,7 +266,6 @@ class SShape extends Shape {
     this.orientation = newOrientation
   }
 }
-
 
 export { Shape, Line, Cube, TShape, ZShape, SShape }
 export type { BoardSize }
