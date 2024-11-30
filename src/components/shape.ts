@@ -267,5 +267,51 @@ class SShape extends Shape {
   }
 }
 
-export { Shape, Line, Cube, TShape, ZShape, SShape }
+class LShape extends Shape {
+  private orientation: FourAxesOrientation = "down"
+
+  constructor(color: string, boardSize: BoardSize) {
+    super([0, 1, 2, boardSize.width], boardSize, color)
+  }
+  flip(occupiedIndexes: number[]) {
+    const mid = this.indexes[1]
+    let newIndexes: number[]
+    let newOrientation: FourAxesOrientation
+
+    switch(this.orientation){
+      case("down"):
+        newIndexes = [mid-this.boardSize.width-1, mid, mid-this.boardSize.width, mid+this.boardSize.width]
+        newOrientation = "left"
+        break
+      case("left"):
+        newIndexes = [mid-this.boardSize.width+1, mid, mid-1,  mid+1]
+        newOrientation = "up"
+        break
+      case("up"):
+        newIndexes = [mid-this.boardSize.width, mid, mid+this.boardSize.width, mid+this.boardSize.width+1]
+        newOrientation = "right"
+        break
+      case("right"):
+        newIndexes = [mid-1, mid, mid+1, mid+this.boardSize.width-1]
+        newOrientation = "down"
+        break
+    }
+
+    if(newOrientation === "up" && !this.areOnTheSameLine(mid, mid+2)) {
+      newIndexes = newIndexes.map((index) => index - 1)
+    }
+    if(newOrientation === "down" && !this.areOnTheSameLine(mid, mid-1)) {
+      newIndexes = newIndexes.map((index) => index + 1)
+    }
+
+    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
+      return
+    }
+
+    this.indexes = newIndexes
+    this.orientation = newOrientation
+  }
+}
+
+export { Shape, Line, Cube, TShape, ZShape, SShape, LShape }
 export type { BoardSize }
