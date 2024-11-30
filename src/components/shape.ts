@@ -78,42 +78,47 @@ abstract class Shape {
         indexes.some((index) => index > this.boardSize.height * this.boardSize.width)
       )      
     }
-}
 
-const areOnTheSameLine = (indexes: number[], boardWidth: number) => {
-  if (indexes.length < 2) {
-    return false
-  }
-  const line = Math.floor(indexes[0] / boardWidth)
-  return indexes.every((index) => Math.floor(index / boardWidth) === line)
+    areOnTheSameLineAsFirst(indexes: number[]) {
+      if (indexes.length < 2) {
+        return false
+      }
+      const line = Math.floor(indexes[0] / this.boardSize.width)
+      return indexes.every((index) => Math.floor(index / this.boardSize.width) === line)
+    }
 }
 
 class Line extends Shape {
   private orientation: TwoAxesOrientation = "horizontal"
 
   constructor(color: string, boardSize: BoardSize, isDown: boolean = false) {
-    super([0, 1, 2], boardSize, color, isDown)
+    super([0, 1, 2, 3], boardSize, color, isDown)
   }
 
   flip(occupiedIndexes: number[]) {
     let newIndexes: number[] = []
     let newOrientation: TwoAxesOrientation
-    const mid = this.indexes[1]
+    const mid = this.indexes[2]
 
     switch(this.orientation) {
       case("horizontal"):
-        newIndexes = [mid - this.boardSize.width, mid, mid + this.boardSize.width]
         newOrientation = "vertical"
+        newIndexes = [mid - 2 * this.boardSize.width, mid - this.boardSize.width, mid, mid + this.boardSize.width]
         break
       case("vertical"):
-        newIndexes = [mid - 1, mid, mid + 1]
         newOrientation = "horizontal"
+        newIndexes = [mid - 2, mid - 1, mid, mid + 1]
         break
     }
-    if (this.orientation === 'vertical' && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
+    console.log(this.areOnTheSameLineAsFirst([mid, mid-1]))
+    if (newOrientation === 'horizontal' && !this.areOnTheSameLineAsFirst([mid, mid-1])) {
+      newIndexes = newIndexes.map((index) => index + 2)
+    }
+    else if (newOrientation === 'horizontal' && !this.areOnTheSameLineAsFirst([mid, mid-2, mid-1])) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
-    if (this.orientation === 'vertical' && !areOnTheSameLine([mid, mid+1], this.boardSize.width)) {
+
+    else if (newOrientation === 'horizontal' && !this.areOnTheSameLineAsFirst([mid, mid+1])) {
       newIndexes = newIndexes.map((index) => index - 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
@@ -176,11 +181,11 @@ class TShape extends Shape {
         break
     }
     // move right if we are on the left edge and would break the shape
-    if (this.orientation !== "down" && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
+    if (this.orientation !== "down" && !this.areOnTheSameLineAsFirst([mid-1, mid])) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
     // move left if we are on the right edge and would break the shape
-    if (this.orientation !== "up" && !areOnTheSameLine([mid, mid+1], this.boardSize.width)) {
+    if (this.orientation !== "up" && !this.areOnTheSameLineAsFirst([mid, mid+1])) {
       newIndexes = newIndexes.map((index) => index - 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
@@ -214,7 +219,7 @@ class ZShape extends Shape {
         break
     }
     // move right when the new rotation is horizontal and the wall prevents to flip the shape
-    if (newOrientation === "horizontal" && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
+    if (newOrientation === "horizontal" && !this.areOnTheSameLineAsFirst([mid-1, mid])) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
@@ -252,7 +257,7 @@ class SShape extends Shape {
     }
 
     // move right when the new rotation is horizontal and the wall prevents to flip the shape
-    if (newOrientation === "horizontal" && !areOnTheSameLine([mid-1, mid], this.boardSize.width)) {
+    if (newOrientation === "horizontal" && !this.areOnTheSameLineAsFirst([mid-1, mid])) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
     if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
