@@ -7,8 +7,8 @@ import Statistics from './components/Statistics'
 const WIDTH = 10
 const HEIGHT = 20
 const FAST_TICK_DURATION_COEFFICIENT = 0.30
-const LEVEL_OF_MAX_SPEED = 20
-const MAX_SPEED = 95
+const LEVEL_OF_MAX_SPEED = 29
+const MAX_SPEED = 100
 const LINES_CLEARED_TO_LEVEL_UP = 1
 const SHAPES_COLORS = ['#8E4585', '#478B59', '#45598E']
 const SHAPES_IN_GAME = [Line, Cube, TShape, ZShape, SShape, LShape]
