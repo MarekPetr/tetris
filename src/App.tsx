@@ -6,6 +6,8 @@ import Statistics from './components/Statistics'
 
 const WIDTH = 10
 const HEIGHT = 20
+const FAST_SIDE_MOVE_SPEED = 55
+const FAST_SIDE_MOVE_TIMEOUT = 70
 const FAST_TICK_DURATION_COEFFICIENT = 0.30
 const LEVEL_OF_MAX_SPEED = 29
 const MAX_SPEED = 100
@@ -15,7 +17,7 @@ const SHAPES_IN_GAME = [Line, Cube, TShape, ZShape, SShape, LShape, JShape]
 
 const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef(() => {});
-
+  const timer = useRef<number | null>(null)
   // Remember the latest function.
   useEffect(() => {
     savedCallback.current = callback;
@@ -27,10 +29,11 @@ const useInterval = (callback: () => void, delay: number | null) => {
       savedCallback.current();
     }
     if (delay !== null) {
-      let id = setInterval(intervalTick, delay);
-      return () => clearInterval(id);
+      let id = window.setInterval(intervalTick, delay);
+      return () => window.clearInterval(id);
     }
   }, [delay]);
+  return timer;
 }
 
 
@@ -203,7 +206,7 @@ const App = () => {
     reset()
   }
 
-  const handleShapeAction = useCallback((action: string) => {
+  const handleShapeMove = useCallback((action: string) => {
     for(const shape of shapesInGame) {
       if (shape.isDown){
         continue
@@ -214,22 +217,52 @@ const App = () => {
       if (action === 'ArrowRight') {
         shape.moveRight(occupiedIndexes)
       }
-      if (action === 'ArrowUp') {
-        shape.flip(occupiedIndexes)
-      }
     }
     setShapesInGame([...shapesInGame])
   }, [shapesInGame, occupiedIndexes])
 
+  const handleShapeFlip = useCallback(() => {
+    for(const shape of shapesInGame) {
+      if (shape.isDown){
+        continue
+      }
+      shape.flip(occupiedIndexes)
+    }
+    setShapesInGame([...shapesInGame])
+  }, [shapesInGame, occupiedIndexes])
+
+  const moveInterval = useRef<number | null>(null)
+  const moveTimeout = useRef<number | null>(null)
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      handleShapeAction(event.key);
-      if (event.key === 'ArrowDown') {
+      if (event.key === 'ArrowUp') {
+        handleShapeFlip();
+      }
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        handleShapeMove(event.key)
+        if (!moveTimeout.current) {
+          moveTimeout.current = window.setTimeout(() => {
+            if (!moveInterval.current) {
+              moveInterval.current = window.setInterval(() => handleShapeMove(event.key), FAST_SIDE_MOVE_SPEED)
+            }  
+          }, FAST_SIDE_MOVE_TIMEOUT)
+        }   
+      }  
+      else if (event.key === 'ArrowDown') {
         setTickDurationMs(getCurrentLevelTickDurationMs(level) * FAST_TICK_DURATION_COEFFICIENT)
       }
     }
 
     const handleKeyUp = (event: KeyboardEvent) => {
+      if (moveTimeout.current) {
+        window.clearTimeout(moveTimeout.current)
+        moveTimeout.current = null
+      }
+      if (moveInterval.current) {
+        window.clearInterval(moveInterval.current)
+        moveInterval.current = null;
+      }
       if (event.key === "ArrowDown") {
         setTickDurationMs(getCurrentLevelTickDurationMs(level))
       }
@@ -242,7 +275,7 @@ const App = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [handleShapeAction, level]);
+  }, [handleShapeMove, handleShapeFlip, level]);
 
   const pauseButton = isStopped ? 
     <button className="board-button tile" onClick={continueRunning}>Continue</button> :
