@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import './App.css';
-import { Shape, Line, Cube, TShape, BoardSize, ZShape, SShape, LShape } from './components/shape'
+import { Shape, Line, Cube, TShape, BoardSize, ZShape, SShape, LShape, JShape } from './components/shape'
 import Board from './components/Board'
 import Statistics from './components/Statistics'
 
@@ -11,7 +11,7 @@ const LEVEL_OF_MAX_SPEED = 29
 const MAX_SPEED = 100
 const LINES_CLEARED_TO_LEVEL_UP = 1
 const SHAPES_COLORS = ['#8E4585', '#478B59', '#45598E']
-const SHAPES_IN_GAME = [Line, Cube, TShape, ZShape, SShape, LShape]
+const SHAPES_IN_GAME = [Line, Cube, TShape, ZShape, SShape, LShape, JShape]
 
 const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef(() => {});
@@ -171,7 +171,7 @@ const App = () => {
     if (shapesInGame.every((shape) => shape.isDown)) {
       const RandomShape = SHAPES_IN_GAME[Math.floor(Math.random() * SHAPES_IN_GAME.length)]
       const newShape = new RandomShape(getRandomColor(), boardSize)
-      newShape.flipRandomly(occupiedIndexes)
+      //newShape.flipRandomly(occupiedIndexes)
       if (newShape.indexes.some((index) => occupiedIndexes.includes(index))) {        
         quit()
         alert("Game over")

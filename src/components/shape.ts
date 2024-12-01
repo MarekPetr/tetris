@@ -250,7 +250,7 @@ class SShape extends Shape {
       case("vertical"):
         mid = this.indexes[1]
         newOrientation = "horizontal"        
-        newIndexes = [mid, mid + 1, mid + this.boardSize.width - 1, mid + this.boardSize.width]
+        newIndexes = [mid, mid + 1, mid, mid + this.boardSize.width - 1, mid + this.boardSize.width]
         break
     }
 
@@ -274,33 +274,33 @@ class LShape extends Shape {
     super([0, 1, 2, boardSize.width], boardSize, color)
   }
   flip(occupiedIndexes: number[]) {
-    const mid = this.indexes[1]
+    const refIndex = this.indexes[1]
     let newIndexes: number[]
     let newOrientation: FourAxesOrientation
 
     switch(this.orientation){
       case("down"):
-        newIndexes = [mid-this.boardSize.width-1, mid, mid-this.boardSize.width, mid+this.boardSize.width]
+        newIndexes = [refIndex-this.boardSize.width-1, refIndex, refIndex-this.boardSize.width, refIndex+this.boardSize.width]
         newOrientation = "left"
         break
       case("left"):
-        newIndexes = [mid-this.boardSize.width+1, mid, mid-1,  mid+1]
+        newIndexes = [refIndex-this.boardSize.width+1, refIndex, refIndex-1,  refIndex+1]
         newOrientation = "up"
         break
       case("up"):
-        newIndexes = [mid-this.boardSize.width, mid, mid+this.boardSize.width, mid+this.boardSize.width+1]
+        newIndexes = [refIndex-this.boardSize.width, refIndex, refIndex+this.boardSize.width, refIndex+this.boardSize.width+1]
         newOrientation = "right"
         break
       case("right"):
-        newIndexes = [mid-1, mid, mid+1, mid+this.boardSize.width-1]
+        newIndexes = [refIndex-1, refIndex, refIndex+1, refIndex+this.boardSize.width-1]
         newOrientation = "down"
         break
     }
 
-    if(newOrientation === "up" && !this.areOnTheSameLine(mid, mid+2)) {
+    if(newOrientation === "up" && !this.areOnTheSameLine(refIndex, refIndex+2)) {
       newIndexes = newIndexes.map((index) => index - 1)
     }
-    if(newOrientation === "down" && !this.areOnTheSameLine(mid, mid-1)) {
+    if(newOrientation === "down" && !this.areOnTheSameLine(refIndex, refIndex-1)) {
       newIndexes = newIndexes.map((index) => index + 1)
     }
 
@@ -313,5 +313,51 @@ class LShape extends Shape {
   }
 }
 
-export { Shape, Line, Cube, TShape, ZShape, SShape, LShape }
+class JShape extends Shape {
+  private orientation: FourAxesOrientation = "down"
+
+  constructor(color: string, boardSize: BoardSize) {
+    super([0, 1, 2, boardSize.width + 2], boardSize, color)
+  }
+  flip(occupiedIndexes: number[]) {
+    const refIndex = this.indexes[1]
+    let newIndexes: number[]
+    let newOrientation: FourAxesOrientation
+
+    switch(this.orientation){
+      case("down"):
+        newIndexes = [refIndex-this.boardSize.width, refIndex, refIndex+this.boardSize.width, refIndex+this.boardSize.width-1]
+        newOrientation = "left"
+        break
+      case("left"):
+        newIndexes = [refIndex-this.boardSize.width-1, refIndex-1, refIndex,  refIndex+1]
+        newOrientation = "up"
+        break
+      case("up"):
+        newIndexes = [refIndex+1, refIndex+1-this.boardSize.width, refIndex+2-this.boardSize.width, refIndex+1+this.boardSize.width]
+        newOrientation = "right"
+        break
+      case("right"):
+        newIndexes = [refIndex+this.boardSize.width-1, refIndex+this.boardSize.width, refIndex+this.boardSize.width+1, refIndex+2*this.boardSize.width+1]
+        newOrientation = "down"
+        break
+    }
+
+    if(newOrientation === "up" && !this.areOnTheSameLine(refIndex, refIndex+1)) {
+      newIndexes = newIndexes.map((index) => index - 1)
+    }
+    if(newOrientation === "down" && !this.areOnTheSameLine(refIndex, refIndex-1)) {
+      newIndexes = newIndexes.map((index) => index + 1)
+    }
+
+    if (this.indexesOutOfBounds(newIndexes, occupiedIndexes)) {
+      return
+    }
+
+    this.indexes = newIndexes
+    this.orientation = newOrientation
+  }
+}
+
+export { Shape, Line, Cube, TShape, ZShape, SShape, LShape, JShape}
 export type { BoardSize }
