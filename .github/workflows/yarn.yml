@@ -1,0 +1,54 @@
+name: Build and Deploy React App
+
+on:
+  push:
+    branches:
+      - master # Replace with your default branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write   # Allows the action to deploy to GitHub Pages
+      id-token: write
+      actions: read
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Use the required Node.js version
+          cache: 'yarn'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: yarn install
+
+      # Step 4: Build the React app
+      - name: Build React App
+        run: yarn build
+
+      # Step 5: Upload Pages Artifact
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: 'github-pages'
+          path: 'build'
+      
+      - name: Configure Pages
+        uses: actions/configure-pages@v4
+
+      # Step 6: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
