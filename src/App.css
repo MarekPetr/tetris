@@ -52,7 +52,7 @@
 .buttons {
   display: flex;
   flex-direction: column;
-  gap: 100px;
+  gap: 30px;
 }
 
 .tile {

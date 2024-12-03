@@ -234,38 +234,46 @@ const App = () => {
   const moveInterval = useRef<number | null>(null)
   const moveTimeout = useRef<number | null>(null)
 
+  const handleKeyDownAction = useCallback((key: string) => {
+    if (key === 'ArrowUp') {
+      handleShapeFlip();
+    }
+    else if (key === 'ArrowLeft' || key === 'ArrowRight') {
+      handleShapeMove(key)
+      if (!moveTimeout.current) {
+        moveTimeout.current = window.setTimeout(() => {
+          if (!moveInterval.current) {
+            moveInterval.current = window.setInterval(() => handleShapeMove(key), FAST_SIDE_MOVE_SPEED)
+          }  
+        }, FAST_SIDE_MOVE_TIMEOUT)
+      }   
+    }  
+    else if (key === 'ArrowDown') {
+      setTickDurationMs(getCurrentLevelTickDurationMs(level) * FAST_TICK_DURATION_COEFFICIENT)
+    }
+  }, [handleShapeFlip, handleShapeMove, level])
+
+  const handleKeyUpAction = useCallback((key: string) => {
+    if (moveTimeout.current) {
+      window.clearTimeout(moveTimeout.current)
+      moveTimeout.current = null
+    }
+    if (moveInterval.current) {
+      window.clearInterval(moveInterval.current)
+      moveInterval.current = null;
+    }
+    if (key === "ArrowDown") {
+      setTickDurationMs(getCurrentLevelTickDurationMs(level))
+    }
+  }, [level])
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowUp') {
-        handleShapeFlip();
-      }
-      else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-        handleShapeMove(event.key)
-        if (!moveTimeout.current) {
-          moveTimeout.current = window.setTimeout(() => {
-            if (!moveInterval.current) {
-              moveInterval.current = window.setInterval(() => handleShapeMove(event.key), FAST_SIDE_MOVE_SPEED)
-            }  
-          }, FAST_SIDE_MOVE_TIMEOUT)
-        }   
-      }  
-      else if (event.key === 'ArrowDown') {
-        setTickDurationMs(getCurrentLevelTickDurationMs(level) * FAST_TICK_DURATION_COEFFICIENT)
-      }
+      handleKeyDownAction(event.key)
     }
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (moveTimeout.current) {
-        window.clearTimeout(moveTimeout.current)
-        moveTimeout.current = null
-      }
-      if (moveInterval.current) {
-        window.clearInterval(moveInterval.current)
-        moveInterval.current = null;
-      }
-      if (event.key === "ArrowDown") {
-        setTickDurationMs(getCurrentLevelTickDurationMs(level))
-      }
+      handleKeyUpAction(event.key)
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -275,7 +283,7 @@ const App = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [handleShapeMove, handleShapeFlip, level]);
+  }, [handleShapeMove, handleShapeFlip, handleKeyDownAction, handleKeyUpAction, level]);
 
   const pauseButton = isStopped ? 
     <button className="board-button tile" onClick={continueRunning}>Continue</button> :
@@ -285,11 +293,35 @@ const App = () => {
     <div className="board-page">
       <div className='content'>
         <div className='buttons'>
-        <button className="board-button tile" onClick={startGame}>New Game</button>
-        { pauseButton }
-        <button className="board-button tile" onClick={quit} disabled={!isRunning && !isStopped}>Quit</button>
+          <button className="board-button tile" onClick={startGame}>New Game</button>
+          { pauseButton }
+          <button className="board-button tile" onClick={quit} disabled={!isRunning && !isStopped}>Quit</button>
         </div>
-        <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
+        <div className='buttons'>
+          <button className="board-button tile"
+            onMouseDown={() => handleKeyDownAction('ArrowUp')}
+            onMouseUp={() => handleKeyUpAction('ArrowUp')}
+            disabled={!isRunning && !isStopped}>Up
+          </button>
+          <button className="board-button tile"
+            onMouseDown={() => handleKeyDownAction('ArrowDown')}
+            onMouseUp={() => handleKeyUpAction('ArrowDown')}
+            disabled={!isRunning && !isStopped}>Down
+          </button>
+          <button className="board-button tile"
+            onMouseDown={() => handleKeyDownAction('ArrowLeft')}
+            onMouseUp={() => handleKeyUpAction('ArrowLeft')}
+            disabled={!isRunning && !isStopped}>Left
+          </button>
+          <button className="board-button tile"
+            onMouseDown={() => handleKeyDownAction('ArrowRight')}
+            onMouseUp={() => handleKeyUpAction('ArrowRight')}
+            disabled={!isRunning && !isStopped}>Right
+          </button>
+        </div>
+        <div>
+          <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
+        </div>        
         <div className='buttons'>
           <Statistics title="Level" value={level}/>
           <Statistics title="Score" value={score}/>
