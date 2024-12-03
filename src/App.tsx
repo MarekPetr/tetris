@@ -301,21 +301,29 @@ const App = () => {
           <button className="board-button tile"
             onMouseDown={() => handleKeyDownAction('ArrowUp')}
             onMouseUp={() => handleKeyUpAction('ArrowUp')}
+            onTouchStart={() => handleKeyDownAction('ArrowUp')}
+            onTouchEnd={() => handleKeyUpAction('ArrowUp')}
             disabled={!isRunning && !isStopped}>Up
           </button>
           <button className="board-button tile"
             onMouseDown={() => handleKeyDownAction('ArrowDown')}
             onMouseUp={() => handleKeyUpAction('ArrowDown')}
+            onTouchStart={() => handleKeyDownAction('ArrowDown')}
+            onTouchEnd={() => handleKeyUpAction('ArrowDown')}
             disabled={!isRunning && !isStopped}>Down
           </button>
           <button className="board-button tile"
             onMouseDown={() => handleKeyDownAction('ArrowLeft')}
             onMouseUp={() => handleKeyUpAction('ArrowLeft')}
+            onTouchStart={() => handleKeyDownAction('ArrowLeft')}
+            onTouchEnd={() => handleKeyUpAction('ArrowLeft')}
             disabled={!isRunning && !isStopped}>Left
           </button>
           <button className="board-button tile"
             onMouseDown={() => handleKeyDownAction('ArrowRight')}
             onMouseUp={() => handleKeyUpAction('ArrowRight')}
+            onTouchStart={() => handleKeyDownAction('ArrowRight')}
+            onTouchEnd={() => handleKeyUpAction('ArrowRight')}
             disabled={!isRunning && !isStopped}>Right
           </button>
         </div>

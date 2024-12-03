@@ -69,6 +69,7 @@
 .board-button {
   border: 5px solid #562A51;
   text-transform: uppercase;
+  user-select: none;
 }
 
 .board-button:disabled {
@@ -97,5 +98,4 @@
 
 .tile .title {
   font-size: 20px;
-  
 }
