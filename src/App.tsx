@@ -300,9 +300,7 @@ const App = () => {
         <div className='buttons'>
           <button className="board-button tile"
             onMouseDown={() => handleKeyDownAction('ArrowUp')}
-            onMouseUp={() => handleKeyUpAction('ArrowUp')}
             onTouchStart={() => handleKeyDownAction('ArrowUp')}
-            onTouchEnd={() => handleKeyUpAction('ArrowUp')}
             disabled={!isRunning && !isStopped}>Up
           </button>
           <button className="board-button tile"
