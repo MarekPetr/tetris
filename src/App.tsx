@@ -3,6 +3,7 @@ import './App.css';
 import { Shape, Line, Cube, TShape, BoardSize, ZShape, SShape, LShape, JShape } from './components/shape'
 import Board from './components/Board'
 import Statistics from './components/Statistics'
+import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoMdArrowRoundUp, IoMdArrowRoundDown } from "react-icons/io";
 
 const WIDTH = 10
 const HEIGHT = 20
@@ -300,22 +301,26 @@ const App = () => {
         <div className='buttons'>
           <button className="board-button tile"
             onPointerDown={() => handleKeyDownAction('ArrowUp')}
-            disabled={!isRunning && !isStopped}>Up
+            disabled={!isRunning && !isStopped}>
+              <IoMdArrowRoundUp size='35px' />
           </button>
           <button className="board-button tile"
             onPointerDown={() => handleKeyDownAction('ArrowDown')}
             onPointerUp={() => handleKeyUpAction('ArrowDown')}
-            disabled={!isRunning && !isStopped}>Down
+            disabled={!isRunning && !isStopped}>
+              <IoMdArrowRoundDown size='35px' />
           </button>
           <button className="board-button tile"
             onPointerDown={() => handleKeyDownAction('ArrowLeft')}
             onPointerUp={() => handleKeyUpAction('ArrowLeft')}
-            disabled={!isRunning && !isStopped}>Left
+            disabled={!isRunning && !isStopped}>
+              <IoMdArrowRoundBack size='35px' />
           </button>
           <button className="board-button tile"
             onPointerDown={() => handleKeyDownAction('ArrowRight')}
             onPointerUp={() => handleKeyUpAction('ArrowRight')}
-            disabled={!isRunning && !isStopped}>Right
+            disabled={!isRunning && !isStopped}>
+              <IoMdArrowRoundForward size='35px' />
           </button>
         </div>
         <div>
