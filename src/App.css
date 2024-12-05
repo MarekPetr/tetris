@@ -99,3 +99,9 @@
 .tile .title {
   font-size: 20px;
 }
+
+.game {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}

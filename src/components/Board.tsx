@@ -34,11 +34,13 @@ const Board = ({height, width, shapes}: {height: number, width: number, shapes: 
     )
   }
   return (
-    <div className='board-third-border'>
-      <div className='board-second-border'>
-        <div className='board-first-border'>
-          <div className='board'>
-            {rows}
+    <div>
+      <div className='board-third-border'>
+        <div className='board-second-border'>
+          <div className='board-first-border'>
+            <div className='board'>
+              {rows}
+            </div>
           </div>
         </div>
       </div>

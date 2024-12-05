@@ -298,34 +298,37 @@ const App = () => {
           { pauseButton }
           <button className="board-button tile" onClick={quit} disabled={!isRunning && !isStopped}>Quit</button>
         </div>
-        <div className='buttons'>
-          <button className="board-button tile"
-            onPointerDown={() => handleKeyDownAction('ArrowUp')}
-            disabled={!isRunning && !isStopped}>
-              <IoMdArrowRoundUp size='35px' />
-          </button>
-          <button className="board-button tile"
-            onPointerDown={() => handleKeyDownAction('ArrowDown')}
-            onPointerUp={() => handleKeyUpAction('ArrowDown')}
-            disabled={!isRunning && !isStopped}>
-              <IoMdArrowRoundDown size='35px' />
-          </button>
-          <button className="board-button tile"
-            onPointerDown={() => handleKeyDownAction('ArrowLeft')}
-            onPointerUp={() => handleKeyUpAction('ArrowLeft')}
-            disabled={!isRunning && !isStopped}>
-              <IoMdArrowRoundBack size='35px' />
-          </button>
-          <button className="board-button tile"
-            onPointerDown={() => handleKeyDownAction('ArrowRight')}
-            onPointerUp={() => handleKeyUpAction('ArrowRight')}
-            disabled={!isRunning && !isStopped}>
-              <IoMdArrowRoundForward size='35px' />
-          </button>
-        </div>
-        <div>
+        
+        <div className='game'>
           <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
-        </div>        
+          <div className='arrows'>
+            <button className="board-button tile"
+              onPointerDown={() => handleKeyDownAction('ArrowUp')}
+              disabled={!isRunning && !isStopped}>
+                <IoMdArrowRoundUp size='35px' />
+            </button>
+            <div>
+              <button className="board-button tile"
+                onPointerDown={() => handleKeyDownAction('ArrowLeft')}
+                onPointerUp={() => handleKeyUpAction('ArrowLeft')}
+                disabled={!isRunning && !isStopped}>
+                  <IoMdArrowRoundBack size='35px' />
+              </button>
+              <button className="board-button tile"
+                onPointerDown={() => handleKeyDownAction('ArrowDown')}
+                onPointerUp={() => handleKeyUpAction('ArrowDown')}
+                disabled={!isRunning && !isStopped}>
+                  <IoMdArrowRoundDown size='35px' />
+              </button>
+              <button className="board-button tile"
+                onPointerDown={() => handleKeyDownAction('ArrowRight')}
+                onPointerUp={() => handleKeyUpAction('ArrowRight')}
+                disabled={!isRunning && !isStopped}>
+                  <IoMdArrowRoundForward size='35px' />
+              </button>
+            </div> 
+          </div>
+        </div>
         <div className='buttons'>
           <Statistics title="Level" value={level}/>
           <Statistics title="Score" value={score}/>
