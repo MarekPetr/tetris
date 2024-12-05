@@ -22,13 +22,13 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18' # Use the required Node.js version
+          node-version: '23' # Use the required Node.js version
           cache: 'yarn'
 
       # Step 3: Install dependencies
