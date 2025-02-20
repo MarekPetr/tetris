@@ -1,47 +1,99 @@
+/* Mobile-first board page - optimize for small screens */
 .board-page {
-  height: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+/* Desktop board page - center content */
+@media only screen and (min-width: 750px) {
+  .board-page {
+    height: 100vh;
+    height: 100svh;
+    min-height: 100dvh;
+    justify-content: center;
+  }
 }
 
 .content {
   text-align: center;
   display: flex;
-  justify-content: space-evenly;
-  margin: 50px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  gap: 15px;
 }
+
+@media only screen and (min-width: 750px) {
+  .content {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 50px;
+  }
+}
+
 
 .board {
   border: 6px solid black;
   display: inline-block;
 }
 
+/* Mobile-first board borders - thinner for mobile */
 .board-first-border {
-  border: 10px solid #311C33;
+  border: 5px solid #311C33;
   display: inline-block;
   border-radius: 2%;
 }
 
 .board-second-border {
-  border: 10px solid #1D203A;
+  border: 5px solid #1D203A;
   display: inline-block;
   border-radius: 2%;
 }
 
 .board-third-border {
-  border: 6px solid black;
+  border: 3px solid black;
   background-color: #1D203A;
   display: inline-block;
   border-radius: 2%;
 }
 
+/* Desktop board borders - thicker for desktop */
+@media only screen and (min-width: 750px) {
+  .board-first-border {
+    border: 10px solid #311C33;
+  }
+
+  .board-second-border {
+    border: 10px solid #1D203A;
+  }
+
+  .board-third-border {
+    border: 6px solid black;
+  }
+}
+
+/* Mobile-first cell size - smaller to fit screen */
 .cell {
   border: 1px solid #332234;
-  height: 35px;
-  width: 35px;
+  height: 22px;
+  width: 22px;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* Desktop cell size - larger for desktop screens */
+@media only screen and (min-width: 750px) {
+  .cell {
+    height: 35px;
+    width: 35px;
+  }
 }
 
 .row {
@@ -49,21 +101,54 @@
   flex-direction: row;
 }
 
+/* Mobile-first buttons layout */
 .buttons {
   display: flex;
-  flex-direction: column;
-  gap: 30px;
+  flex-direction: row;
+  gap: 15px;
 }
 
+/* Desktop buttons layout */
+@media only screen and (min-width: 750px) {
+  .buttons {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+/* Mobile-first tile buttons - smaller for mobile */
 .tile {
-  font-size: 24px;
+  font-size: 16px;
   color: #abb4af;
   border: solid;
   border-radius: 3%;
   background-color: transparent;
-  width: 150px;
-  height: 100px;
+  width: 80px;
+  height: 50px;
   font-weight: bolder;
+}
+
+/* Desktop tile buttons - larger for desktop */
+@media only screen and (min-width: 750px) {
+  .tile {
+    font-size: 24px;
+    width: 150px;
+    height: 100px;
+  }
+}
+
+.arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.arrows-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
 }
 
 .board-button {
@@ -100,8 +185,16 @@
   font-size: 20px;
 }
 
+/* Mobile-first game layout - smaller gap */
 .game {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 5px;
+}
+
+/* Desktop game layout - larger gap */
+@media only screen and (min-width: 750px) {
+  .game {
+    gap: 25px;
+  }
 }

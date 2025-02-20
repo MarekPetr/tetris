@@ -307,7 +307,7 @@ const App = () => {
               disabled={!isRunning && !isStopped}>
                 <IoMdArrowRoundUp size='35px' />
             </button>
-            <div>
+            <div className="arrows-row">
               <button className="board-button tile"
                 onPointerDown={() => handleKeyDownAction('ArrowLeft')}
                 onPointerUp={() => handleKeyUpAction('ArrowLeft')}
