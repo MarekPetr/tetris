@@ -151,7 +151,7 @@
   gap: 10px;
 }
 
-.board-button {
+.board-button, .board-button:focus {
   border: 5px solid #562A51;
   text-transform: uppercase;
   user-select: none;
