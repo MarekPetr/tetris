@@ -105,7 +105,7 @@
 .buttons {
   display: flex;
   flex-direction: row;
-  gap: 15px;
+  gap: 5px;
 }
 
 /* Desktop buttons layout */
@@ -118,12 +118,12 @@
 
 /* Mobile-first tile buttons - smaller for mobile */
 .tile {
-  font-size: 16px;
+  font-size: 14px;
   color: #abb4af;
   border: solid;
   border-radius: 3%;
   background-color: transparent;
-  width: 80px;
+  width: 110px;
   height: 50px;
   font-weight: bolder;
 }
@@ -152,14 +152,20 @@
 }
 
 .board-button, .board-button:focus {
-  border: 5px solid #562A51;
+  border: 2px solid #562A51;
   text-transform: uppercase;
   user-select: none;
 }
 
 .board-button:disabled {
   background-color: transparent;
-  border: 5px solid #41313f;
+  border-color: #41313f;
+}
+
+@media only screen and (min-width: 750px) {
+  .board-button, .board-button:focus, .board-button:disabled {
+    border-width: 5px;
+  }
 }
 
 .board-button:disabled:hover {
