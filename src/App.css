@@ -116,16 +116,16 @@
   }
 }
 
-/* Mobile-first tile buttons - smaller for mobile */
+/* Mobile-first tile buttons - content-based width */
 .tile {
   font-size: 14px;
   color: #abb4af;
   border: solid;
   border-radius: 3%;
   background-color: transparent;
-  width: 110px;
   height: 50px;
   font-weight: bolder;
+  width: 90px;
 }
 
 /* Desktop tile buttons - larger for desktop */
