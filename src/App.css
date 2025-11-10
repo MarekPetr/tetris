@@ -2,9 +2,10 @@
 .board-page {
   min-height: 100vh;
   min-height: 100svh;
+  max-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   box-sizing: border-box;
 }
 
@@ -25,19 +26,7 @@
   justify-content: center;
   align-items: center;
   margin: 10px;
-  gap: 15px;
 }
-
-@media only screen and (min-width: 750px) {
-  .content {
-    text-align: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    margin: 50px;
-  }
-}
-
 
 .board {
   border: 6px solid black;
@@ -102,18 +91,11 @@
 }
 
 /* Mobile-first buttons layout */
-.buttons {
+.score {
   display: flex;
   flex-direction: row;
+  justify-content: space-evenly;
   gap: 5px;
-}
-
-/* Desktop buttons layout */
-@media only screen and (min-width: 750px) {
-  .buttons {
-    flex-direction: column;
-    gap: 30px;
-  }
 }
 
 /* Mobile-first tile buttons - content-based width */
@@ -183,11 +165,16 @@
 }
 
 .statistics {
-  border-color: #45598E;
-  border-width: 3px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: #abb4af;
+}
+
+@media only screen and (min-width: 750px) {
+  .statistics {
+    font-size: 24px;
+  }
 }
 
 .tile .title {

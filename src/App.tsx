@@ -289,24 +289,31 @@ const App = () => {
   const pauseButton = isStopped ? 
     <button className="board-button tile" onClick={continueRunning}>Continue</button> :
     <button className="board-button tile" onClick={stop} disabled={!isRunning}>Pause</button>
+
+  const newGameButton = !isRunning ?
+    <button className="board-button tile" onClick={startGame}>New Game</button> :
+    <button className="board-button tile" onClick={quit}>End game</button>    
   
   return (
     <div className="board-page">
-      <div className='content'>
-        <div className='buttons'>
-          <button className="board-button tile" onClick={startGame}>New Game</button>
-          { pauseButton }
-          <button className="board-button tile" onClick={quit} disabled={!isRunning && !isStopped}>Quit</button>
-        </div>
-        
+      <div className='content'>        
         <div className='game'>
+          <div className='score'>
+            <Statistics title="Level" value={level}/>
+            <Statistics title="Score" value={score}/>
+          </div>
           <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
           <div className='arrows'>
-            <button className="board-button tile"
-              onPointerDown={() => handleKeyDownAction('ArrowUp')}
-              disabled={!isRunning && !isStopped}>
-                <IoMdArrowRoundUp size='35px' />
-            </button>
+            <div className="arrows-row">
+              { newGameButton }
+              <button className="board-button tile"
+                onPointerDown={() => handleKeyDownAction('ArrowUp')}
+                disabled={!isRunning && !isStopped}>
+                  <IoMdArrowRoundUp size='35px' />
+              </button>
+              { pauseButton }
+              
+            </div>
             <div className="arrows-row">
               <button className="board-button tile"
                 onPointerDown={() => handleKeyDownAction('ArrowLeft')}
@@ -328,11 +335,6 @@ const App = () => {
               </button>
             </div> 
           </div>
-        </div>
-        <div className='buttons'>
-          <Statistics title="Level" value={level}/>
-          <Statistics title="Score" value={score}/>
-          <Statistics title="Speed" value={Math.floor(tickDurationMs)}/>
         </div>
       </div>
     </div>
