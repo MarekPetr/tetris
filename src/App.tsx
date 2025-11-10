@@ -175,7 +175,7 @@ const App = () => {
     if (shapesInGame.every((shape) => shape.isDown)) {
       const RandomShape = SHAPES_IN_GAME[Math.floor(Math.random() * SHAPES_IN_GAME.length)]
       const newShape = new RandomShape(getRandomColor(), boardSize)
-      //newShape.flipRandomly(occupiedIndexes)
+      newShape.flipRandomly(occupiedIndexes)
       if (newShape.indexes.some((index) => occupiedIndexes.includes(index))) {        
         quit()
         alert("Game over")
