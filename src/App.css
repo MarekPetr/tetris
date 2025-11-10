@@ -1,4 +1,3 @@
-/* Mobile-first board page - optimize for small screens */
 .board-page {
   min-height: 100vh;
   min-height: 100svh;
@@ -9,7 +8,6 @@
   box-sizing: border-box;
 }
 
-/* Desktop board page - center content */
 @media only screen and (min-width: 750px) {
   .board-page {
     height: 100vh;
@@ -33,7 +31,6 @@
   display: inline-block;
 }
 
-/* Mobile-first board borders - thinner for mobile */
 .board-first-border {
   border: 5px solid #311C33;
   display: inline-block;
@@ -53,7 +50,6 @@
   border-radius: 2%;
 }
 
-/* Desktop board borders - thicker for desktop */
 @media only screen and (min-width: 750px) {
   .board-first-border {
     border: 10px solid #311C33;
@@ -68,7 +64,6 @@
   }
 }
 
-/* Mobile-first cell size - smaller to fit screen */
 .cell {
   border: 1px solid #332234;
   height: 22px;
@@ -77,7 +72,6 @@
   user-select: none;
 }
 
-/* Desktop cell size - larger for desktop screens */
 @media only screen and (min-width: 750px) {
   .cell {
     height: 35px;
@@ -90,15 +84,13 @@
   flex-direction: row;
 }
 
-/* Mobile-first buttons layout */
-.score {
+.control-row {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   gap: 5px;
 }
 
-/* Mobile-first tile buttons - content-based width */
 .tile {
   font-size: 14px;
   color: #abb4af;
@@ -110,7 +102,6 @@
   width: 90px;
 }
 
-/* Desktop tile buttons - larger for desktop */
 @media only screen and (min-width: 750px) {
   .tile {
     font-size: 24px;
@@ -155,7 +146,6 @@
   color: #ABADB4;
 }
 
-/* Only apply hover on devices that can actually hover (not touch) */
 @media (hover: hover) {
   .board-button:hover {
     background-color: #271829;
@@ -165,24 +155,22 @@
 }
 
 .statistics {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  align-items: center;
   border: none;
-  font-size: 24px;
   font-weight: bold;
   color: #abb4af;
 }
 
-.tile .title {
-  font-size: 20px;
-}
-
-/* Mobile-first game layout - smaller gap */
 .game {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-/* Desktop game layout - larger gap */
 @media only screen and (min-width: 750px) {
   .game {
     gap: 25px;

@@ -1,7 +1,8 @@
 const Statistics = ({title, value}: {title: string, value: number}) => {
   return (
-  <div className="statistics">
-    <span className="title">{title} {value}</span>
+  <div className="statistics tile">
+    <div>{title}</div>
+    <div>{value}</div>
   </div>
   )
 }

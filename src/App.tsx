@@ -287,32 +287,31 @@ const App = () => {
   }, [handleShapeMove, handleShapeFlip, handleKeyDownAction, handleKeyUpAction, level]);
 
   const pauseButton = isStopped ? 
-    <button className="board-button tile" onClick={continueRunning}>Continue</button> :
-    <button className="board-button tile" onClick={stop} disabled={!isRunning}>Pause</button>
+    <button className="board-button tile" onClick={continueRunning}>Pokračovat</button> :
+    <button className="board-button tile" onClick={stop} disabled={!isRunning}>Pauza</button>
 
   const newGameButton = isRunning || isStopped?
-    <button className="board-button tile" onClick={quit}>End game</button> :
-    <button className="board-button tile" onClick={startGame}>New Game</button>
+    <button className="board-button tile" onClick={quit}>Ukončit hru</button> :
+    <button className="board-button tile" onClick={startGame}>Nová hra</button>
   
   return (
     <div className="board-page">
       <div className='content'>        
         <div className='game'>
-          <div className='score'>
-            <Statistics title="Level" value={level}/>
-            <Statistics title="Score" value={score}/>
+          <div className='control-row'>
+            { newGameButton }
+            { pauseButton }
           </div>
           <Board height={boardSize.height} width={boardSize.width} shapes={shapesInGame}/>
           <div className='arrows'>
             <div className="arrows-row">
-              { newGameButton }
+              <Statistics title="Level" value={level}/>              
               <button className="board-button tile"
                 onPointerDown={() => handleKeyDownAction('ArrowUp')}
                 disabled={!isRunning && !isStopped}>
                   <IoMdArrowRoundUp size='35px' />
               </button>
-              { pauseButton }
-              
+              <Statistics title="Score" value={score}/>              
             </div>
             <div className="arrows-row">
               <button className="board-button tile"
