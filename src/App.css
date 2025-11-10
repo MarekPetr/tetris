@@ -177,6 +177,7 @@
   border: none;
   font-weight: bold;
   color: #abb4af;
+  user-select: none;
 }
 
 .game {
