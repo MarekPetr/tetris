@@ -290,9 +290,9 @@ const App = () => {
     <button className="board-button tile" onClick={continueRunning}>Continue</button> :
     <button className="board-button tile" onClick={stop} disabled={!isRunning}>Pause</button>
 
-  const newGameButton = !isRunning ?
-    <button className="board-button tile" onClick={startGame}>New Game</button> :
-    <button className="board-button tile" onClick={quit}>End game</button>    
+  const newGameButton = isRunning || isStopped?
+    <button className="board-button tile" onClick={quit}>End game</button> :
+    <button className="board-button tile" onClick={startGame}>New Game</button>
   
   return (
     <div className="board-page">
