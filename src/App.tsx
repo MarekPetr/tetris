@@ -178,7 +178,7 @@ const App = () => {
       newShape.flipRandomly(occupiedIndexes)
       if (newShape.indexes.some((index) => occupiedIndexes.includes(index))) {        
         quit()
-        alert("Game over")
+        alert("Konec hry")
         return
       }
       setShapesInGame([...shapesInGame, newShape])
