@@ -84,7 +84,7 @@
   flex-direction: row;
 }
 
-.control-row {
+.control-buttons {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -104,6 +104,20 @@
 
 @media only screen and (min-width: 750px) {
   .tile {
+    font-size: 24px;
+    width: 150px;
+    height: 100px;
+  }
+}
+
+.tile.control-button {
+  font-size: 14px;
+  height: 50px;
+  width: 110px;
+}
+
+@media only screen and (min-width: 750px) {
+  .tile.control-button {
     font-size: 24px;
     width: 150px;
     height: 100px;

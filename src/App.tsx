@@ -287,18 +287,18 @@ const App = () => {
   }, [handleShapeMove, handleShapeFlip, handleKeyDownAction, handleKeyUpAction, level]);
 
   const pauseButton = isStopped ? 
-    <button className="board-button tile" onClick={continueRunning}>Pokračovat</button> :
-    <button className="board-button tile" onClick={stop} disabled={!isRunning}>Pauza</button>
+    <button className="board-button tile control-button" onClick={continueRunning}>Pokračovat</button> :
+    <button className="board-button tile control-button" onClick={stop} disabled={!isRunning}>Pauza</button>
 
   const newGameButton = isRunning || isStopped?
-    <button className="board-button tile" onClick={quit}>Ukončit hru</button> :
-    <button className="board-button tile" onClick={startGame}>Nová hra</button>
+    <button className="board-button tile control-button" onClick={quit}>Ukončit hru</button> :
+    <button className="board-button tile control-button" onClick={startGame}>Nová hra</button>
   
   return (
     <div className="board-page">
       <div className='content'>        
         <div className='game'>
-          <div className='control-row'>
+          <div className='control-buttons'>
             { newGameButton }
             { pauseButton }
           </div>
@@ -311,7 +311,7 @@ const App = () => {
                 disabled={!isRunning && !isStopped}>
                   <IoMdArrowRoundUp size='35px' />
               </button>
-              <Statistics title="Score" value={score}/>              
+              <Statistics title="Skóre" value={score}/>              
             </div>
             <div className="arrows-row">
               <button className="board-button tile"
