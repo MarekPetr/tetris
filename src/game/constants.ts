@@ -1,4 +1,4 @@
-import { Cube, JShape, Line, LShape, SShape, TShape, ZShape } from "../components/shape";
+import { Cube, JShape, Line, LShape, SShape, TShape, ZShape } from "components/shape";
 
 export const GAME_CONFIG = {
   WIDTH: 10,

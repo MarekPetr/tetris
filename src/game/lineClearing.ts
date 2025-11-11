@@ -1,5 +1,5 @@
 
-import { Shape, BoardSize } from '../components/shape';
+import { Shape, BoardSize } from 'components/shape';
 
 export const findCompletedLines = (
   boardSize: BoardSize,

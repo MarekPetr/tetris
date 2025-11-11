@@ -1,6 +1,6 @@
 import React from 'react';
 import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoMdArrowRoundUp, IoMdArrowRoundDown } from 'react-icons/io';
-import Statistics from './Statistics';
+import Statistics from 'components/Statistics';
 
 interface ArrowControlsProps {
   isRunning: boolean;

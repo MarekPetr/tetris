@@ -1,4 +1,4 @@
-import { Shape } from './shape'
+import { Shape } from 'components/shape'
 
 const CELL_COLOR = '#1A101B'
 

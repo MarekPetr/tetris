@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { SHAPES_COLORS } from '../game/constants';
+import { SHAPES_COLORS } from 'game/constants';
 
 export const useRandomColor = () => {
   const nextColorIndex = useRef(0);

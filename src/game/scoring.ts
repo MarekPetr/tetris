@@ -1,4 +1,4 @@
-import { GAME_CONFIG } from './constants';
+import { GAME_CONFIG } from 'game/constants';
 
 export const calculateScore = (numberOfLinesRemoved: number, level: number): number => {
   const scoreTable: Record<number, number> = {

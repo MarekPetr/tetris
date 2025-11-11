@@ -1,20 +1,20 @@
-import './App.css';
-import { BoardSize } from './components/shape';
-import { GAME_CONFIG, SHAPES_IN_GAME } from './game/constants';
-import { useGameState } from './hooks/useGameState';
-import { useInterval } from './hooks/useInterval';
-import { useRandomColor } from './utils/randomColor';
-import { useKeyboardControls } from './hooks/useKeyboardControls';
-import Board from './components/Board';
-import { GameControls } from './components/GameControls';
-import { ArrowControls } from './components/ArrowControls';
+import 'App.css';
+import { BoardSize } from 'components/shape';
+import { GAME_CONFIG, SHAPES_IN_GAME } from 'game/constants';
+import { useGameState } from 'hooks/useGameState';
+import { useInterval } from 'hooks/useInterval';
+import { useRandomColor } from 'utils/randomColor';
+import { useKeyboardControls } from 'hooks/useKeyboardControls';
+import Board from 'components/Board';
+import { GameControls } from 'components/GameControls';
+import { ArrowControls } from 'components/ArrowControls';
 import {
   findCompletedLines,
   removeCompletedLines,
   filterEmptyShapes,
   dropShapesAboveLine,
-} from './game/lineClearing';
-import { calculateScore, getCurrentLevelTickDurationMs } from './game/scoring';
+} from 'game/lineClearing';
+import { calculateScore, getCurrentLevelTickDurationMs } from 'game/scoring';
 
 const App = () => {
   const boardSize: BoardSize = { width: GAME_CONFIG.WIDTH, height: GAME_CONFIG.HEIGHT };

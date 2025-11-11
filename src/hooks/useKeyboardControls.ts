@@ -1,7 +1,7 @@
 import { useCallback, useRef, useEffect } from 'react';
-import { Shape } from '../components/shape';
-import { GAME_CONFIG } from '../game/constants';
-import { getCurrentLevelTickDurationMs } from '../game/scoring';
+import { Shape } from 'components/shape';
+import { GAME_CONFIG } from 'game/constants';
+import { getCurrentLevelTickDurationMs } from 'game/scoring';
 
 interface UseKeyboardControlsProps {
   isRunning: boolean;
