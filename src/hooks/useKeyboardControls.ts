@@ -62,10 +62,10 @@ export const useKeyboardControls = ({
           if (!moveInterval.current) {
             moveInterval.current = window.setInterval(
               () => handleShapeMove(key),
-              GAME_CONFIG.FAST_SIDE_MOVE_SPEED
+              GAME_CONFIG.SIDE_MOVE_SPEED
             );
           }
-        }, GAME_CONFIG.FAST_SIDE_MOVE_TIMEOUT);
+        }, GAME_CONFIG.SIDE_MOVE_TIMEOUT);
       }
     } else if (key === 'ArrowDown') {
       setTickDurationMs(

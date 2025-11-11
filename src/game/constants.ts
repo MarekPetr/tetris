@@ -3,8 +3,8 @@ import { Cube, JShape, Line, LShape, SShape, TShape, ZShape } from "game/shape";
 export const GAME_CONFIG = {
   WIDTH: 10,
   HEIGHT: 20,
-  FAST_SIDE_MOVE_SPEED: 55,
-  FAST_SIDE_MOVE_TIMEOUT: 70,
+  SIDE_MOVE_SPEED: 55,
+  SIDE_MOVE_TIMEOUT: 70,
   FAST_TICK_DURATION_COEFFICIENT: 0.30,
   LEVEL_OF_MAX_SPEED: 29,
   MAX_SPEED: 100,
