@@ -1,5 +1,5 @@
 import 'App.css';
-import { BoardSize } from 'components/shape';
+import { BoardSize } from 'game/shape';
 import { GAME_CONFIG, SHAPES_IN_GAME } from 'game/constants';
 import { useGameState } from 'hooks/useGameState';
 import { useInterval } from 'hooks/useInterval';

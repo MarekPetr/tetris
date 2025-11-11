@@ -1,4 +1,4 @@
-import { Shape } from 'components/shape'
+import { Shape } from 'game/shape'
 
 const CELL_COLOR = '#1A101B'
 

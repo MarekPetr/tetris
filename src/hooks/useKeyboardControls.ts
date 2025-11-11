@@ -1,5 +1,5 @@
 import { useCallback, useRef, useEffect } from 'react';
-import { Shape } from 'components/shape';
+import { Shape } from 'game/shape';
 import { GAME_CONFIG } from 'game/constants';
 import { getCurrentLevelTickDurationMs } from 'game/scoring';
 

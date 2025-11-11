@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Shape } from 'components/shape';
+import { Shape } from 'game/shape';
 import { getCurrentLevelTickDurationMs } from 'game/scoring';
 
 export const useGameState = () => {
