@@ -1,21 +1,17 @@
-import React from 'react';
-
-interface GameControlsProps {
-  isRunning: boolean;
-  isStopped: boolean;
-  onStart: () => void;
-  onStop: () => void;
-  onContinue: () => void;
-  onQuit: () => void;
-}
-
-export const GameControls: React.FC<GameControlsProps> = ({
+export const GameControls = ({
   isRunning,
   isStopped,
   onStart,
   onStop,
   onContinue,
   onQuit,
+}: {
+  isRunning: boolean;
+  isStopped: boolean;
+  onStart: () => void;
+  onStop: () => void;
+  onContinue: () => void;
+  onQuit: () => void;
 }) => {
   const pauseButton = isStopped ? (
     <button className="board-button tile control-button" onClick={onContinue}>

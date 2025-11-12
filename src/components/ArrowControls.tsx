@@ -1,21 +1,18 @@
-import React from 'react';
 import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoMdArrowRoundUp, IoMdArrowRoundDown } from 'react-icons/io';
 import Statistics from 'components/Statistics';
 
-interface ArrowControlsProps {
-  isRunning: boolean;
-  level: number;
-  score: number;
-  onKeyDown: (key: string) => void;
-  onKeyUp: (key: string) => void;
-}
-
-export const ArrowControls: React.FC<ArrowControlsProps> = ({
+export const ArrowControls = ({
   isRunning,
   level,
   score,
   onKeyDown,
   onKeyUp,
+}: {
+  isRunning: boolean;
+  level: number;
+  score: number;
+  onKeyDown: (key: string) => void;
+  onKeyUp: (key: string) => void;
 }) => {
   return (
     <div className='arrows'>
