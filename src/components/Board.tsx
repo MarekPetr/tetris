@@ -1,23 +1,26 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Shape } from 'game/shape'
 
 const CELL_COLOR = '#1A101B'
 
+const calculateCellSize = (boardHeight: number): number => {
+  return (window.innerHeight / boardHeight) * 0.6
+}
+
 const Cell = ({filled, color, boardHeight}: {filled: boolean, color: string, boardHeight: number}) => {
-  const getCellHeight = useCallback(() => ((window.innerHeight / boardHeight) * 0.6), [boardHeight])
-  const [height, setHeight] = useState(getCellHeight)
+  const [size, setSize] = useState(() => calculateCellSize(boardHeight))
 
   useEffect(() => {
     const handleResize = () => {
-      setHeight(getCellHeight())
+      setSize(calculateCellSize(boardHeight))
     }
     
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [boardHeight, getCellHeight])
+  }, [boardHeight])
 
   return (
-    <div className='cell' style={{backgroundColor: filled ? color : CELL_COLOR, height: height, width: height}}/>
+    <div className='cell' style={{backgroundColor: filled ? color : CELL_COLOR, height: size, width: size}}/>
   )
 }
   
